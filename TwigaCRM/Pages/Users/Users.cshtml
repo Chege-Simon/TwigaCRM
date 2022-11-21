@@ -1,0 +1,220 @@
+﻿@page
+@model TwigaCRM.Pages.Users.UsersModel
+
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Users</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New User</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Users[0].FirstName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Users[0].LastName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Users[0].UserName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Users[0].AppRole)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Users[0].Email)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Users[0].PhoneNumber)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Users[0].IsActivated)
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Users)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AppRole.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PhoneNumber)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsActivated)
+                        </td>
+                        <td class="row">
+                            <a asp-page="./Edit" asp-route-id="@item.Id"data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                            <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@*New User modal*@
+<div class="modal fade" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Input.Email"></label>
+                            <input asp-for="Input.Email" class="form-control" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Input.FirstName"></label>
+                            <input asp-for="Input.FirstName" class="form-control" />
+                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Input.LastName"></label>
+                            <input asp-for="Input.LastName" class="form-control" />
+                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Input.PhoneNumber"></label>
+                            <input asp-for="Input.PhoneNumber" class="form-control" />
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Input.Status">Activated</label>
+                            <input asp-for="Input.Status">
+                            <span asp-validation-for="Input.Status" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Input.AppRoleId">Role</label>
+                            <div class="row">
+                                <select id="ddlAppRoles" asp-for="Input.AppRoleId" name="Input.AppRoleId" asp-items="ViewBag.AppRoles" class="form-control" style="width:100%">
+                                    <option value="">--  Select Role  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.AppRoleId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Input.TownId">Town</label>
+                            <div class="row">
+                                <select id="ddlTowns" asp-for="Input.TownId" name="Input.TownId" asp-items="ViewBag.Towns" class="form-control" style="width:100%">
+                                    <option value="">--  Select Town  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.TownId" class="text-danger"></span>
+                        </div>
+                        
+                      @*  <div class="form-group col-md-12">
+                            <label asp-for="Input.TownId" class="control-label">Town</label>
+                            <select asp-for="Input.TownId" class ="form-control" asp-items="ViewBag.Towns">
+                                <option value="">Select Town</option>
+                            </select>
+                            <span asp-validation-for="Input.TownId" class="text-danger"></span>
+                        </div>*@
+                        <div class="input-group mb-3">
+                            <input asp-for="Input.Password" class="form-control" placeholder="Password" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Retype password" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    $(document).ready(function() {
+      $("#ddlAppRoles").select2({
+              dropdownParent: $("#InputModal")
+      });
+});
+</script>
+<script>
+    $(document).ready(function() {
+      $("#ddlTowns").select2({
+              dropdownParent: $("#InputModal")
+      });
+});
+</script>
+<script type="text/javascript">
+    $("body").on("change", "#ddlAppRoles", function () {
+        $("input[name=AppRoleId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("change", "#ddlTowns", function () {
+        $("input[name=TownId]").val($(this).find("option:selected").text());
+    });
+</script>

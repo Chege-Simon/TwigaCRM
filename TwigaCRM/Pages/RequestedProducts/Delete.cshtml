@@ -1,0 +1,82 @@
+﻿@page
+@model TwigaCRM.Pages.RequestedProducts.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>RequestedProduct</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.Campaign)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.Campaign.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.Product)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.Product.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.CurrentMovement)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.CurrentMovement)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.CurrentMovementValue)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.CurrentMovementValue)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.ProjectedMovement)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.ProjectedMovement)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.ProjectedMovementValue)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.ProjectedMovementValue)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.ImportantObservation)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.ImportantObservation)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.FollowUpAction)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.FollowUpAction)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.CreateAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.CreateAt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestedProduct.UpdateAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestedProduct.UpdateAt)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="RequestedProduct.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

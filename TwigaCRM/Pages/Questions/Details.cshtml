@@ -1,0 +1,139 @@
+﻿@page
+@model TwigaCRM.Pages.Questions.DetailsModel
+
+@{
+    ViewData["Title"] = "Question - Details";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h2">Question Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Question:</label>
+                            @Model.Question.QuestionDesc
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Question.MoreInfo
+                        </h6>
+                        <h5 class="col-md-12">
+                            <label>Question Type:</label>
+                            @Model.Question.QuestionType
+                        </h5>
+                        <hr />
+                        <p class="col-md-12">Call Type : <span>@Model.Question.CallType.Name</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6 row">
+                </div>
+            </div>
+            <br />
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header row">
+                    <h2 class="card-title col-md-9 font-weight-bolder">Answers</h2>
+                    <span class="col-md-3">
+                            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add Choice</a>
+                    </span>
+                </div>
+                <table class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Answers[0].AnswerDesc)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Answers[0].DisplayOrder)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Answers[0].UpdateAt)
+                                </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Answers)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.AnswerDesc)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DisplayOrder)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.UpdateAt)
+                                    </td>
+                                    <td class="row">
+                                        <a asp-page="../Answers/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a><span>|</span>
+                                        <a asp-page="../Answers/Delete" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5 text-danger"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Call modal*@
+<div class="modal fade" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Call</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-12">
+                            <label asp-for="Answer.QuestionId" class="control-label"></label>
+                            <input class="form-control" value="@Model.Question.QuestionDesc" disabled />
+                            <input asp-for="Answer.QuestionId" class="form-control" value="@Model.Question.Id" type="hidden" />
+                        </div>
+                        <div class="form-group col-12">
+                            <label asp-for="Answer.AnswerDesc" class="control-label"></label>
+                            <input asp-for="Answer.AnswerDesc" class="form-control" />
+                            <span asp-validation-for="Answer.AnswerDesc" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-12">
+                            <label asp-for="Answer.DisplayOrder" class="control-label"></label>
+                            <input asp-for="Answer.DisplayOrder" class="form-control" />
+                            <span asp-validation-for="Answer.DisplayOrder" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

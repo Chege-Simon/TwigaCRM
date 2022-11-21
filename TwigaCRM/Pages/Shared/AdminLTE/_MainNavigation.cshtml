@@ -1,0 +1,693 @@
+﻿@using TwigaCRM.Models;
+@inject SignInManager<AppUser> signInManager;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<TwigaCRM.Models.AppUser> userManager
+@using System.Security.Claims;
+@inject ApplicationDbContext _context
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Authorization
+<aside class="main-sidebar bg-gray-light elevation-4" style="position: fixed;height: 100vh">
+   
+    <!-- Brand Logo -->
+    <a asp-page="/Dashboard/Index" class="brand-link">
+        <img src="~/img/TwigachemicalsLogo.jpg" alt="Twiga Chemicals Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text  font-weight-darker">Twiga C.R.M</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class
+    with font-awesome or any other icon font library -->
+                @{
+                    string CurrentURL = @Context.Request.Path;
+                    string nav = "";
+                    string[] test = CurrentURL.Split("/");
+                    switch (CurrentURL.Split("/")[1])
+                    {
+                        case "Dashboard":
+                        case "":
+                            nav = "Dashboard";
+                            break;
+                        case "AuditTrail":
+                            nav = "AuditTrail";
+                            break;
+                        case "Roles":
+                        case "Users":
+                            nav = "Administration";
+                            break;
+                        case "Products":
+                        case "MarketingAndDemoItems":
+                        case "Customers":
+                        case "CropsAndAnimals":
+                        case "Regions":
+                        case "Towns":
+                        case "Zones":
+                        case "CampaignItems":
+                        case "CompetingProducts":
+                            nav = "Masters";
+                            break;
+                        case "DailyMovements":
+                        case "SalesMovements":
+                        case "Targets":
+                        case "MonthlyPerformance":
+                        case "RoutePlan":
+                        case "RAMDailySales":
+                        //case "RAMDailyCollections":
+                        case "RAMSaleTargets":
+                        //case "RAMCollectionTargets":
+                        case "RAMRoutePlans":
+                        case "RAMFieldReports":
+                        case "StockTakes":
+                        case "Routes":
+                        case "Plans":
+                        case "RAMPlans":
+                        case "RAMRoutes":
+                        case "PickAndReturnForms":
+                            nav = "Sales";
+                            break;
+                        case "Campaigns":
+                        case "CampaignBudgets":
+                        case "RequestedExpenses":
+                        case "RequestedCampaignItems":
+                        case "ExpenseReceipts":
+                        case "RequestedProducts":
+                        case "Demos":
+                        case "DemoDetails":
+                        case "DemoProgressReports":
+                            nav = "Marketing/Demos";
+                            break;
+                        case "Budgets":
+                        case "ExpenseCategories":
+                        case "PestsAndDiseases":
+                        case "BusinessLines":
+                        case "Permissions":
+                        case "FinancialYears":
+                            nav = "Settings";
+                            break;
+                        case "DailyMovementReports":
+                        case "PerformanceReports":
+                        case "Reports":
+                        case "RAMDailySaleReports":
+                        case "CampaignReports":
+                        case "DemoReports":
+                        case "RoutePlanReports":
+                        //case "RAMDailyCollectionReports":
+                            nav = "Reports";
+                            break;
+                        case "Calls":
+                        case "CallTypes":
+                        case "Questions":
+                        case "Answers":
+                        case "QuestionResponses":
+                            nav = "Field Operations";
+                            break;
+
+                        case "CompetitionActivities":
+                            nav = "CompetitionActivities";
+                            break;
+                        default:
+                            // code block
+                            break;
+                    }
+                    List<string> shownav = ViewBag.shownav;
+                }
+                <li class="nav-item">
+                    <a is-active-route class=" nav-link text-dark @(nav=="Dashboard"? "active" : "")" asp-page="/Dashboard/Index">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Dashboard
+                        </p>
+                    </a>
+                </li>
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("roles") || shownav.Contains("users"))
+                {
+                    <li class="nav-item">
+                        <a asp-page="#" class=" nav-link text-dark @(nav=="Administration"? "active" : "")">
+                            <i class="nav-icon fas fa-building"></i>
+                            <p>
+                                Administration
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview" style="@(nav=="Administration"? "display: block;" : "")"> 
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("roles"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route class=" nav-link @(CurrentURL.Split("/")[1]=="Roles"? "text-primary" : " text-dark")" asp-page="/Roles/Roles" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-tasks"></i>
+                                        <p>Roles</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("users"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/Users/Users" class=" nav-link @(CurrentURL.Split("/")[1]=="Users"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-users"></i>
+                                        <p>Users</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("regions") || shownav.Contains("products") || shownav.Contains("customers") || shownav.Contains("crops_and_animals") || shownav.Contains("campaign_items") || shownav.Contains("competing_products"))
+                {
+                    <li class="nav-item">
+                        <a asp-page="#" class=" nav-link text-dark @(nav=="Masters"? "active" : "")">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>
+                                Masters
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+
+                        <ul class="nav nav-treeview" style="@(nav=="Masters"? "display: block;" : "")">
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("regions"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route class=" nav-link @(CurrentURL.Split("/")[1]=="Regions"? "text-primary" : " text-dark")" asp-page="/Regions/Regions" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-globe"></i>
+                                        <p>Regions</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("customers"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/Customers/Customers" class=" nav-link  @(CurrentURL.Split("/")[1]=="Customers"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-users"></i>
+                                        <p>Customers</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("products"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/Products/Products" class=" nav-link @(CurrentURL.Split("/")[1]=="Products"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-product-hunt"></i>
+                                        <p>Products</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("crops_and_animals"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/CropsAndAnimals/CropsAndAnimals" class=" nav-link @(CurrentURL.Split("/")[1]=="CropsAndAnimals"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-leaf"></i>
+                                        <p>Crops And Animals</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("campaign_items"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/CampaignItems/CampaignItems" class=" nav-link @(CurrentURL.Split("/")[1]=="CampaignItems"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-cubes"></i>
+                                        <p>Campaign Items</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("competing_products"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/CompetingProducts/CompetingProducts" class=" nav-link @(CurrentURL.Split("/")[1]=="CompetingProducts"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-pie-chart"></i>
+                                        <p>Competetion</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                </li>
+                }
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("daily_movements") || shownav.Contains("MTs") || shownav.Contains("stock_takes") || shownav.Contains("route_plans") || shownav.Contains("daily_sales") 
+                || shownav.Contains("RAM_STs") || shownav.Contains("daily_collections") || shownav.Contains("field_reports") || shownav.Contains("RAM_collection_targets") || shownav.Contains("RAM_route_plans") || shownav.Contains("view_pick_and_return_forms"))
+                {
+                    <li class="nav-item">
+                        <a href="#" class=" nav-link text-dark @(nav=="Sales"? "active" : "")">
+                            <i class="nav-icon fa fa-shopping-cart"></i>
+                            <p>
+                                Sales
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview" style="@(nav=="Sales"? "display: block;" : "")">
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("daily_movements"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/DailyMovements/DailyMovements" class=" nav-link @(CurrentURL.Split("/")[1]=="DailyMovements"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-truck"></i>
+                                        <p>Daily Movements</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("MTs"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-area="" asp-page="/SalesMovements/SalesMovements" class=" nav-link @(CurrentURL.Split("/")[1]=="SalesMovements"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-bullseye"></i>
+                                        <p>Movement Target</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("stock_takes"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/StockTakes/StockTakes" class=" nav-link @(CurrentURL.Split("/")[1]=="StockTakes"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-table"></i>
+                                        <p>Stock Take</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("route_plans"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/Plans/Plans" class=" nav-link @(CurrentURL.Split("/")[1]=="Plans"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-map"></i>
+                                        <p>Route Plan</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("daily_sales"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/RAMDailySales/RAMDailySales" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMDailySales"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-truck"></i>
+                                        <p>Daily Sales</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("RAM_STs"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-area="" asp-page="/RAMSaleTargets/RAMSaleTargets" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMSaleTargets"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-bullseye"></i>
+                                        <p>Sales Target</p>
+                                    </a>
+                                </li>
+                            }
+                     @*       @if (signInManager.IsSignedIn(User) && shownav.Contains("daily_collections"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/RAMDailyCollections/RAMDailyCollections" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMDailyCollections"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-truck"></i>
+                                        <p>R.A.M Daily Collect</p>
+                                    </a>
+                                </li>
+                            }*@
+                           @* @if (signInManager.IsSignedIn(User) && shownav.Contains("RAM_collection_targets"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-area="" asp-page="/RAMCollectionTargets/RAMCollectionTargets" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMCollectionTargets"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-bullseye"></i>
+                                        <p>R.A.M Collect Target</p>
+                                    </a>
+                                </li>
+                            }*@
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("RAM_route_plans"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/RAMPlans/RAMPlans" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMPlans"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-map"></i>
+                                        <p>Route Plan</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("view_pick_and_return_forms"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/PickAndReturnForms/PickAndReturnForms" class=" nav-link @(CurrentURL.Split("/")[1]=="PickAndReturnForms"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-list-ol"></i>
+                                        <p>Pick & Return</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("field_reports"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/RAMFieldReports/RAMFieldReports" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMFieldReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-folder"></i>
+                                        <p>Field Report</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("campaigns") || shownav.Contains("demos") || shownav.Contains("campaign_budgets"))
+                {
+                    <li class="nav-item">
+                        <a href="#" class=" nav-link text-dark @(nav=="Marketing/Demos"? "active" : "")">
+                            <i class="nav-icon fas fa-layer-group"></i>
+                            <p>
+                                Marketing/Demos
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview" style="@(nav=="Marketing/Demos"? "display: block;" : "")">
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("campaigns"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/Campaigns/Campaigns" class=" nav-link @(CurrentURL.Split("/")[1]=="Campaigns"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-bullhorn"></i>
+                                        <p>Campaign</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("demos"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/Demos/Demos" class=" nav-link @(CurrentURL.Split("/")[1]=="Demos"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-play"></i>
+                                        <p>Demo</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("campaign_budgets"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/CampaignBudgets/CampaignBudgets" class=" nav-link @(CurrentURL.Split("/")[1]=="CampaignBudgets"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-calculator"></i>
+                                        <p>Campaign Budget</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                </li>
+                }
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("calls") || shownav.Contains("calltypes") || shownav.Contains("questions") || shownav.Contains("question_responses"))
+                {
+                <li class="nav-item">
+                    <a href="#" class=" nav-link text-dark @(nav=="Field Operations"? "active" : "")">
+                        <i class="nav-icon fa fa-phone"></i>
+                        <p>
+                            Field Operations
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview" style="@(nav=="Field Operations"? "display: block;" : "")">
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("calls"))
+                        {
+                        <li class="nav-item">
+                                    <a is-active-route asp-page="/Calls/Calls" class=" nav-link @(CurrentURL.Split("/")[1]=="Calls"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                <i class="nav-icon fa fa-volume-control-phone"></i>
+                                <p>Calls</p>
+                            </a>
+                        </li>
+                        }
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("calltypes"))
+                        {
+                        <li class="nav-item">
+                            <a is-active-route asp-page="/CallTypes/CallTypes" class=" nav-link @(CurrentURL.Split("/")[1]=="CallTypes"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                <i class="nav-icon fa fa-mobile"></i>
+                                <p>Call Types</p>
+                            </a>
+                        </li>
+                        }
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("questions"))
+                        {
+                        <li class="nav-item">
+                            <a is-active-route asp-page="/Questions/Questions" class=" nav-link @(CurrentURL.Split("/")[1]=="Questions"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                <i class="nav-icon fa fa-question"></i>
+                                <p>Questions</p>
+                            </a>
+                        </li>
+                        }
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("question_responses"))
+                        {
+                        <li class="nav-item">
+                                    <a is-active-route asp-page="/QuestionResponses/QuestionResponses" class=" nav-link @(CurrentURL.Split("/")[1]=="QuestionResponses"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                <i class="nav-icon fa fa-reply"></i>
+                                <p>Responses</p>
+                            </a>
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("DMRs") || shownav.Contains("generate_performance_reports") || shownav.Contains("generate_RAM_performance_reports") || shownav.Contains("generate_daily_movement_report") || shownav.Contains("generate_sales_target_report")
+                || shownav.Contains("DSR")|| shownav.Contains("DCR") || shownav.Contains("generate_daily_collection_report") || shownav.Contains("generate_RAM_collection_target_report") ||shownav.Contains("generate_daily_sale_report") ||shownav.Contains("generate_RAM_sale_target_report"))
+                {
+                <li class="nav-item">
+                    <a href="#" class=" nav-link text-dark @(nav=="Reports"? "active" : "")">
+                        <i class="nav-icon fa fa-book"></i>
+                        <p>
+                            Reports
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview" style="@(nav=="Reports"? "display: block;" : "")">
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("DMRs"))
+                        {
+                        <li class="nav-item">
+                                    <a is-active-route asp-page="/DailyMovementReports/DailyMovementReports" class=" nav-link @(CurrentURL.Split("/")[1]=="DailyMovementReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                <i class="nav-icon fa fa-folder-open-o"></i>
+                                <p>D.M.R</p>
+                            </a>
+                        </li>
+                        }
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("DSR"))
+                        {
+                        <li class="nav-item">
+                                    <a is-active-route asp-page="/RAMDailySaleReports/RAMDailySaleReports" class=" nav-link @(CurrentURL.Split("/")[1]=="DailySaleReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                <i class="nav-icon fa fa-folder-open-o"></i>
+                                <p>D.S.R</p>
+                            </a>
+                        </li>
+                        }
+                       @* @if (signInManager.IsSignedIn(User) && shownav.Contains("DCR"))
+                        {
+                        <li class="nav-item">
+                                    <a is-active-route asp-page="/RAMDailyCollectionReports/RAMDailyCollectionReports" class=" nav-link @(CurrentURL.Split("/")[1]=="DailyCollectionReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                <i class="nav-icon fa fa-folder-open-o"></i>
+                                <p>D.C.R</p>
+                            </a>
+                        </li>
+                        }*@
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_performance_reports"))
+                        {
+                            <li class="nav-item">
+                                <a is-active-route asp-page="/PerformanceReports/PerformanceReports" class=" nav-link @(CurrentURL.Split("/")[1]=="PerformanceReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-line-chart"></i>
+                                    <p>Movement Performance</p>
+                                </a>
+                            </li>
+                        }
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_RAM_performance_reports"))
+                        {
+                            <li class="nav-item">
+                                    <a is-active-route asp-page="/RAMPerformanceReports/RAMSalePerformanceReports" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMPerformanceReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-line-chart"></i>
+                                    <p>Sales Performance</p>
+                                </a>
+                            </li>
+                        }
+                    @*    @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_RAM_performance_reports"))
+                        {
+                            <li class="nav-item">
+                                    <a is-active-route asp-page="/PerformanceReports/RAMCollectionPerformanceReports" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMCollectionPerformanceReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-line-chart"></i>
+                                    <p>RAM Collect Performance</p>
+                                </a>
+                            </li>
+                        }*@
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_daily_movement_report"))
+                        {
+                        <li class="nav-item">
+                                <a is-active-route asp-page="/DailyMovementReports/DMReports" class=" nav-link @(CurrentURL.Split("/")[1]=="DMReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-folder-open-o"></i>
+                                <p>Approved D.M.R (s)</p>
+                            </a>
+                        </li>
+                        }
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_sales_target_report"))
+                        {
+                        <li class="nav-item">
+                                    <a is-active-route asp-page="/Reports/STReports" class=" nav-link @(CurrentURL.Split("/")[1]=="STReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-folder-open-o"></i>
+                                <p>Approved M.T (s)</p>
+                            </a>
+                        </li>
+                        }
+                       @* @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_daily_collection_report"))
+                        {
+                            <li class="nav-item">
+                                <a is-active-route asp-page="/RAMDailyCollectionReports/DCReports" class=" nav-link @(CurrentURL.Split("/")[1]=="DCReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-folder-open-o"></i>
+                                    <p>Approved D.C.R (s)</p>
+                                </a>
+                            </li>
+                        }*@
+                       @* @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_RAM_collection_target_report"))
+                        {
+                            <li class="nav-item">
+                                <a is-active-route asp-page="/Reports/RAMCTReports" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMCTReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-bullseye"></i>
+                                    <p>Approved R.A.M C.T (s)</p>
+                                </a>
+                            </li>
+                        }*@
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_daily_sale_report"))
+                        {
+                            <li class="nav-item">
+                                <a is-active-route asp-page="/RAMDailySaleReports/DSReports" class=" nav-link @(CurrentURL.Split("/")[1]=="DSReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-folder-open-o"></i>
+                                    <p>Approved D.S.R (s)</p>
+                                </a>
+                            </li>
+                        }
+                        @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_RAM_sale_target_report"))
+                        {
+                            <li class="nav-item">
+                                <a is-active-route asp-page="/Reports/RAMSTReports" class=" nav-link @(CurrentURL.Split("/")[1]=="RAMSTReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-bullseye"></i>
+                                    <p>Approved S.T (s)</p>
+                                </a>
+                            </li>
+                        }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_campaign_reports"))
+                        {
+                            <li class="nav-item">
+                                <a is-active-route asp-page="/CampaignReports/CampaignReports" class=" nav-link @(CurrentURL.Split("/")[1]=="CampaignReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-bullhorn"></i>
+                                    <p>Campaign Report</p>
+                                </a>
+                            </li>
+                        }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_demo_reports"))
+                        {
+                            <li class="nav-item">
+                                <a is-active-route asp-page="/DemoReports/DemoReports" class=" nav-link @(CurrentURL.Split("/")[1]=="DemoReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-play"></i>
+                                    <p>Demo Report</p>
+                                </a>
+                            </li>
+                        }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("generate_route_plan_reports"))
+                        {
+                            <li class="nav-item">
+                                <a is-active-route asp-page="/RoutePlanReports/RoutePlanReports" class=" nav-link @(CurrentURL.Split("/")[1]=="RoutePlanReports"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                    <i class="nav-icon fa fa-map"></i>
+                                    <p>Route Plan Report</p>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("competition_activities"))
+                {
+                    <li class="nav-item">
+                        <a href="#" class=" nav-link text-dark @(nav=="CompetitionActivities"? "active" : "")">
+                            <i class="nav-icon fa fa-info-circle"></i>
+                            <p>
+                                Competetion Intell
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview" style="@(nav=="CompetitionActivities"? "display: block;" : "")">
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("competition_activities"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/CompetitionActivities/CompetitionActivities" class=" nav-link @(CurrentURL.Split("/")[1]=="CompetitionActivities"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-clock-o"></i>
+                                        <p>Activities</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("pests_and_diseases") || shownav.Contains("businesslines_and_sectors") || shownav.Contains("permissions") || shownav.Contains("expense_categories") || shownav.Contains("financial_years"))
+                {
+                    <li class="nav-item">
+                        <a href="#" class=" nav-link text-dark @(nav=="Settings"? "active" : "")">
+                            <i class="nav-icon fa fa-cog"></i>
+                            <p>
+                                Settings
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview" style="@(nav=="Settings"? "display: block;" : "")">
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("pests_and_diseases"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/PestsAndDiseases/PestsAndDiseases" class=" nav-link @(CurrentURL.Split("/")[1]=="PestsAndDiseases"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-exclamation-circle"></i>
+                                        <p>Pests & Diseases</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("businesslines_and_sectors"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route class=" nav-link @(CurrentURL.Split("/")[1]=="BusinessLines"? "text-primary" : " text-dark")" asp-page="/BusinessLines/BusinessLines" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-link"></i>
+                                        <p>B Lines & Sectors</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("permissions"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route class=" nav-link @(CurrentURL.Split("/")[1]=="Permissions"? "text-primary" : " text-dark")" asp-page="/Permissions/Permissions" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-key"></i>
+                                        <p>Permissions</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("expense_categories"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route class=" nav-link @(CurrentURL.Split("/")[1]=="ExpenseCategories"? "text-primary" : " text-dark")" asp-page="/ExpenseCategories/ExpenseCategories" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-money"></i>
+                                        <p>Expenses</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("financial_years"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route class=" nav-link @(CurrentURL.Split("/")[1]=="FinancialYears"? "text-primary" : " text-dark")" asp-page="/FinancialYears/FinancialYears" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-clock-o"></i>
+                                        <p>Financial Year</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                @if (signInManager.IsSignedIn(User) && shownav.Contains("audit_trail"))
+                {
+                    <li class="nav-item">
+                        <a href="#" class=" nav-link text-dark @(nav=="AuditTrail"? "active" : "")">
+                            <i class="nav-icon fa fa-copy"></i>
+                            <p>
+                                Audit Trail
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview" style="@(nav=="AuditTrail"? "display: block;" : "")">
+                            @if (signInManager.IsSignedIn(User) && shownav.Contains("audit_trail"))
+                            {
+                                <li class="nav-item">
+                                    <a is-active-route asp-page="/AuditTrail/AuditTrail" class=" nav-link @(CurrentURL.Split("/")[1]=="AuditTrail"? "text-primary" : " text-dark")" style="margin-left: 15%; width: 85%">
+                                        <i class="nav-icon fa fa-copy"></i>
+                                        <p>Audit Trail</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

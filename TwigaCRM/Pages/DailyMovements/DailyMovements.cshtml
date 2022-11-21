@@ -1,0 +1,148 @@
+﻿@page
+@model TwigaCRM.Pages.DailyMovements.IndexModel
+
+@{
+    ViewData["Title"] = "Daily Movement";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Daily Movement Reports</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" data-toggle="modal" data-target="#InputModal">New D.M.R</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DailyMovementReports[0].SalesPerson)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DailyMovementReports[0].SalesDate)
+                    </th>
+                    <th>
+                        Submitted
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DailyMovementReports[0].FOAstatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DailyMovementReports[0].TLstatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DailyMovementReports[0].CreateAt)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DailyMovementReports[0].UpdateAt)
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.DailyMovementReports)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SalesPerson.FirstName)
+                            @Html.DisplayFor(modelItem => item.SalesPerson.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SalesDate)
+                        </td>
+                        <td>
+                            @if (item.IsSubmitted)
+                            {
+                                <span>Yes</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FOAstatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TLstatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreateAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdateAt)
+                        </td>
+                        <td>
+                            @if (item.IsSubmitted)
+                            {
+                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a>
+                            }
+                            else
+                            {
+                                <a asp-page="../DailyMovementReports/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                            }
+                            @*<a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>|*@
+                            | <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@*New Daily Movement modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Daily Movement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" >
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="DailyMovementReport.SalesPersonId" class="control-label">Sales Person</label>
+                            <input class="form-control" value="@Model.AppUser.Email" disabled/>
+                            <input asp-for="DailyMovementReport.SalesPersonId" class="form-control" value="@Model.AppUser.Id" hidden />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="DailyMovementReport.SalesDate" class="control-label">Sales Date</label>
+                            <input asp-for="DailyMovementReport.SalesDate" class="form-control" />
+                            <span asp-validation-for="DailyMovementReport.SalesDate" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

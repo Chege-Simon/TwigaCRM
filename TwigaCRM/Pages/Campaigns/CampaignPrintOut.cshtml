@@ -1,0 +1,324 @@
+﻿@page
+@model TwigaCRM.Pages.Campaigns.CampaignPrintOutModel
+
+@{
+    ViewData["Title"] = "CampaignPrintOut";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid" id="content">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h2">Campaign Print Out</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.Campaign.SalesPerson.FirstName @Model.Campaign.SalesPerson.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Campaign.SalesPerson.PhoneNumber
+                        </h6>
+                        <h5 class="col-md-12">
+                            <label>Campaign Title:</label>
+                            @Model.Campaign.Title
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Campaign.Description
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.Campaign.SalesPerson.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Town & Region: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Campaign.SalesPerson.Town.Name - @Model.Campaign.SalesPerson.Town.Region.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Budget: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Campaign.CampaignBudget.Description: @Model.Campaign.CampaignBudget.FinancialYear.StartDate.Year - @Model.Campaign.CampaignBudget.FinancialYear.EndDate.Year</p>
+                        </div>
+                        <div class="col-md-6"></div><div class="col-md-3">
+                            <label>Campaign Type: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Campaign.CampaignType</p>
+                        </div>
+                        <div class="col-md-6"></div><div class="col-md-3">
+                            <label>Number Of Farmers: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Campaign.NumberOfFarmers</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Partnering Stockist: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            @if (Model.Campaign.PartneringStockist != null)
+                            {
+                                <p>@Model.Campaign.PartneringStockist.SiteName</p>
+                            }
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-6 row">
+                    <div class="col-3"></div>
+                    <div class="col-9 row">
+                        <div class="col-md-7">
+                            <label>F.O.A Approval Status: </label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Campaign.FOAstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>H.R.M Approval Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Campaign.HRMstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>Campaign Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Campaign.Status</p>
+                        </div>
+                    </div>
+                </div>
+               @*  <div class="col-md-2"></div>
+                <div class="col-md-8 row">
+                    <div class="row col-12">
+                        <label for="remarks_history" class="col-12">Remarks History:</label>
+
+                        <textarea disabled asp-for=@Model.Campaign.Remarks class="col-12" rows="6"> </textarea>
+                    </div>
+                </div>
+                <div class="col-md-2"></div>*@
+            </div>
+            <br />
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h1 class="card-title col-md-9 font-weight-bolder">Campaign Products</h1>
+                        </div>
+                        <table class="table table-bordered table-striped dataTable" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].Product)
+                                    </th>
+                                    <th>
+                                        Current Movement
+                                    </th>
+                                    <th>
+                                        C. Value
+                                    </th>
+                                    <th>
+                                        Projected Movement
+                                    </th>
+                                    <th>
+                                        P. Value
+                                    </th>
+                                    <th>
+                                        Approved
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        @foreach (var item in Model.RequestedProducts) {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Name) 
+                                        <span>(</span>
+                                        @Html.DisplayFor(modelItem => item.Product.Code) 
+                                        <span>)</span>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CurrentMovement)
+                                    </td>
+                                    <td>
+                                        KSh @String.Format("{0:#,##0.00}", item.CurrentMovementValue)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ProjectedMovement)
+                                    </td>
+                                    <td>
+                                        KSh @String.Format("{0:#,##0.00}", item.ProjectedMovementValue)
+                                    </td>
+                                    <td class="text-success">
+                                        @if (item.IsFOAApproved)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                    </td>
+                                </tr>
+                        }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header row">
+                    <h2 class="card-title col-md-9 font-weight-bolder">Campaign Items</h2>
+                </div>
+                <table class="table table-bordered table-striped dataTable" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.RequestedCampaignItems[0].CampaignItem)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.RequestedCampaignItems[0].RequestedQuantity)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.RequestedCampaignItems[0].RequestedPrice)
+                                </th>
+                                <th>
+                                    Approved Quantity
+                                </th>
+                                <th>
+                                    Approved Price
+                                </th>
+                                <th>
+                                    Approved
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.RequestedCampaignItems)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CampaignItem.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RequestedQuantity)
+                                    </td>
+                                    <td>
+                                        KSh @String.Format("{0:#,##0.00}", item.RequestedPrice)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FOAApprovedQuantity)
+                                    </td>
+                                    <td>
+                                        KSh @String.Format("{0:#,##0.00}", item.FOAApprovedPrice)
+                                    </td>
+                                    <td class="text-success">
+                                        @if (item.IsFOAApproved)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header row">
+                    <h2 class="card-title col-md-9 font-weight-bolder">Campaign Expenses</h2>
+                </div>
+                <table class="table table-bordered table-striped dataTable" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RequestedExpenses[0].ExpenseCategory)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RequestedExpenses[0].RequestedAmount)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RequestedExpenses[0].ApprovedAmount)
+                            </th>
+                            <th>
+                                Approved
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.RequestedExpenses)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ExpenseCategory.Name)
+                                </td>
+                                <td>
+                                    KSh @String.Format("{0:#,##0.00}", item.RequestedAmount)
+                                </td>
+                                <td>
+                                   KSh @String.Format("{0:#,##0.00}", item.ApprovedAmount)
+                                </td>
+                                <td class="text-success">
+                                    @if (item.IsFOAApproved)
+                                    {
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $(".dataTable").DataTable({
+                "paging": false,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+        });
+    </script>
+
+    <script>
+        window.addEventListener("load", window.print());
+        //var doc = new jsPDF();
+        //var specialElementHandlers = {
+        //    '#editor': function (element, renderer) {
+        //        return true;
+        //    }
+        //};
+
+        //$(document).ready(function () {
+        //    doc.fromHTML($('#content').html(), 15, 15, {
+        //        'width': 170,
+        //        'elementHandlers': specialElementHandlers
+        //    });
+        //    doc.save('sample-file.pdf');
+        //});
+    </script>

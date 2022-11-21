@@ -1,0 +1,742 @@
+﻿@page
+@model TwigaCRM.Pages.Demos.DetailsModel
+
+@{
+    ViewData["Title"] = "Demo - Details";
+    bool CanFOAApprove = false;
+    bool CanPDApprove = false;
+    bool CanCreate = false;
+    bool CanChangeStatus = false;
+    bool Closable = false;
+
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+    @foreach (var permission in Model.Permissions)
+        {
+    @if (permission.Id == userpermission.PermissionId && permission.Name == "foa_approve_demo")
+            {
+                CanFOAApprove = true;
+                break;
+            }
+    @if (permission.Id == userpermission.PermissionId && permission.Name == "pd_approve_demo")
+            {
+                CanPDApprove = true;
+                break;
+            }
+    @if (permission.Id == userpermission.PermissionId && permission.Name == "create_demo")
+            {
+                CanCreate = true;
+                break;
+            }
+    @if (permission.Id == userpermission.PermissionId && permission.Name == "change_demo_status")
+            {
+                CanChangeStatus = true;
+                break;
+            }
+        }
+    }
+    @foreach(var detail in Model.DemoDetails){
+    @foreach (var report in detail.DemoProgressReports)
+        {
+    @if (report.IsFinalReport)
+            {
+                Closable = true;
+            }
+        }
+    }
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center row">
+            <p class="h2 col-md-9">Demo Details</p>
+            @if( Model.Demo.PDstatus == "Approved" && Model.Demo.FOAstatus == "Approved" && Model.Demo.IsSubmitted && Model.Demo.Status == "Open" && Model.Demo.SalesPersonId == Model.AppUser.Id){
+                <a asp-page="./DemoPrintOut" asp-route-id="@Model.Demo.Id" class="btn btn-success col-md-2">Generate Print Out</a> 
+            }
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.Demo.SalesPerson.FirstName @Model.Demo.SalesPerson.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Demo.SalesPerson.PhoneNumber
+                        </h6>
+                        <h5 class="col-md-12">
+                            <label>Demo Title:</label>
+                            @Model.Demo.Title
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Demo.Description
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.Demo.SalesPerson.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Demo Type: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Demo.DemoType</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-6 row">
+                    <div class="col-3"></div>
+                    <div class="col-9 row">
+                        <div class="col-md-7">
+                            <label>F.O.A Approval Status: </label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Demo.FOAstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>P.D Approval Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Demo.PDstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>Demo Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Demo.Status</p>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+                    @if (Model.Demo.IsSubmitted == false && CanCreate)
+                    {
+                        <div>
+                            <a asp-page="./Submit" asp-route-id="@Model.Demo.Id" class="btn btn-primary rounded">Submit Demo</a>
+                        </div>
+                    }else if (Model.Demo.IsSubmitted == true && CanCreate && Model.Demo.Status != "Closed"){
+                        <div>
+                            <a disabled class="btn btn-secondary rounded">Submit Demo</a>
+                        </div>
+                    }
+                    <hr/>
+                    @if (CanFOAApprove && Model.Demo.IsSubmitted && Model.Demo.Status != "Closed")
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="FOAstatus" class="control-label col">Demo F.O.A Approval Status</label>
+                                <select asp-for="FOAstatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="FOAApprove" asp-route-id="@Model.Demo.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                    @if (CanPDApprove && Model.Demo.IsSubmitted && Model.Demo.FOAstatus == "Approved" && Model.Demo.Status != "Closed")
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="PDstatus" class="control-label col">Demo P.D Approval Status</label>
+                                <select asp-for="PDstatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="PDApprove" asp-route-id="@Model.Demo.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                    @if (CanChangeStatus && Model.Demo.PDstatus == "Approved" && Model.Demo.FOAstatus == "Approved" && Closable)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="Status" class="control-label col">Demo Status</label>
+                                <select asp-for="Status" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Closed">Close</option>
+                                    <option value="Opened">Open</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="DemoStatus" asp-route-id="@Model.Demo.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+                 <div class="col-md-2"></div>
+                <div class="col-md-8 row">
+                    <div class="row col-12">
+                        <label for="remarks_history" class="col-12">Remarks History:</label>
+
+                        <textarea disabled asp-for=@Model.Demo.Remarks class="col-12" rows="6"> </textarea>
+                    </div>
+                    <form method="post" class="col-md-12">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Remarks" class="control-label">Add Remarks</label>
+                            <input asp-for="Remarks" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" asp-page-handler="AddRemarks" asp-route-id="@Model.Demo.Id" class="btn btn-primary" id="Add">Add Remarks</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <br />
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h1 class="card-title col-md-9 font-weight-bolder">Demo Details</h1>
+                            <span class="col-md-3">
+                            @if( Model.Demo.IsSubmitted){
+                            <a class="btn btn-secondary" diabled>Add</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add</a>
+                            }
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id ="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Demo Location
+                                    </th>
+                                    <th>
+                                        Crop / Animal
+                                    </th>
+                                    <th>
+                                        Target Pest / Disease
+                                    </th>
+                                    <th>
+                                    Req Land in Ha. / No. Of Animals
+                                    </th>
+                                    <th>
+                                        Req No. Of Demos
+                                    </th>
+                                    <th>
+                                    App Land in Ha. / No. Of Animals
+                                    </th>
+                                    <th>
+                                        App No. Of Demos
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DemoDetails[0].Product)
+                                    </th>
+                                    <th>
+                                        Competing Product
+                                    </th>
+                                <th>Comment</th>
+                                <th>Requested Volume</th>
+                                <th>Approved Volume</th>
+                                    <th>Approval</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in Model.DemoDetails)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Site.SiteName)
+                                        <span> - </span>
+                                        @Html.DisplayFor(modelItem => item.Site.PhoneNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CropAndAnimal.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PestAndDisease.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RequestedQuantityOfSample)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RequestedNumberOfDemos)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ApprovedQuantityOfSample)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ApprovedNumberOfDemos)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Name)
+                                        @Html.DisplayFor(modelItem => item.Product.PackagingSize)
+                                        @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                        <span>(</span>
+                                        @Html.DisplayFor(modelItem => item.Product.Code)
+                                        <span>)</span>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CompetingProduct.ProductName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Remarks)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RequestedVolumeOfProduct)
+                                        @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ApprovedVolumeOfProduct)
+                                        @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                    </td>
+                                    <td class="text-success">
+                                        @if (item.IsFOAApproved)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                        @if (item.IsPDApproved)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                    </td>
+                                    <td class="row">
+                                    
+                                    @if (Model.Demo.IsSubmitted && Model.Demo.FOAstatus != "Approved" && CanFOAApprove )
+                                        {                                           
+                                            <a asp-page="../DemoDetails/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-3"><i class="fa fa-check" aria-hidden="true"></i></a> <span>|</span>
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a><span>|</span>
+                                        }
+                                        else if (Model.Demo.IsSubmitted && Model.Demo.PDstatus != "Approved" && CanPDApprove && Model.Demo.FOAstatus == "Approved")
+                                        {                                           
+                                            <a asp-page="../DemoDetails/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-3"><i class="fa fa-check" aria-hidden="true"></i></a> <span>|</span>                                     
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a><span>|</span>
+                                        }
+                                        else if (Model.Demo.IsSubmitted && CanCreate)
+                                        {                                               
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-3"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>                                 
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a><span>|</span>
+                                        }
+                                        else
+                                        {
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-3"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                                            <a asp-page="../DemoDetails/Delete" asp-route-id="@item.Id" asp-route-demoId="@Model.Demo.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-3"><i class="fa fa-times text-danger" aria-hidden="true"></i></a> <span>|</span>
+                                        }
+                                        @if(Model.Demo.IsSubmitted && Model.Demo.PDstatus == "Approved" && Model.Demo.FOAstatus == "Approved" && Closable ==  false){
+                                            <a asp-page="../DemoProgressReports/DemoProgressReports" asp-route-id="@item.Id" asp-route-demoId="@item.Demo.Id" data-toggle="tooltip" data-placement="top" title="Upload Progress Reports" class="col-3"><i class="fa fa-upload" aria-hidden="true"></i></a>                                   
+                                        }else{                                           
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Upload Progress Reports" class="col-3 text-secondary"><i class="fa fa-upload" aria-hidden="true"></i></a>
+                                        } 
+                                    </td>
+                            </tr>
+                        }
+                            </tbody>
+                        </table>
+                    </div>
+            </div><div class="col-md-12">
+                <div class="card">
+                    <div class="card-header row">
+                        <h1 class="card-title col-md-9 font-weight-bolder">Demo Product Requisition</h1>
+                        <span class="col-md-3">
+                            @if (!Model.Demo.IsSubmitted)
+                            {
+                                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#RequisitionModal">Add Requisition</a>
+
+                            }
+                            else
+                            {
+                                <a class="btn btn-secondary" disabled>Add Requisition</a>
+                            }
+                        </span>
+                    </div>
+                    <table class="table table-bordered table-striped" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Stockist
+                                </th>
+                                <th>
+                                    Product
+                                </th>
+                                <th>
+                                    Quantity
+                                </th>
+                                <th>
+                                    Total Price
+                                </th>
+                                <th>
+                                    Attched Invoice
+                                </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.DemoProductRequisitions)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Stockist.SiteName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Description)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quanitity)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TotalPrice)
+                                    </td>
+                                    <td class="text-success">
+                                        @if (item.InvoiceUrl != null)
+                                        {
+                                            <a asp-page="../Demos/Details" asp-page-handler="DownloadFile" asp-route-fileName="@item.InvoiceUrl" data-toggle="tooltip" data-placement="top" title="Download Invoice" class="col-5"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                        }
+                                    </td>
+                                    <td class="row">
+
+                                        @if (Model.Demo.IsSubmitted && Model.Demo.FOAstatus != "Approved" && CanFOAApprove)
+                                        {
+                                            <a asp-page="../DemoProductRequisitions/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <span>|</span>
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-5"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                        }
+                                        else if (Model.Demo.IsSubmitted && Model.Demo.PDstatus != "Approved" && CanPDApprove && Model.Demo.FOAstatus == "Approved")
+                                        {
+                                            <a asp-page="../DemoProductRequisitions/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <span>|</span>
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-5"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                        }
+                                        else if (Model.Demo.IsSubmitted && CanCreate)
+                                        {
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-5"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-5"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-5"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                                            <a asp-page="../DemoProductRequisitions/Delete" asp-route-id="@item.Id" asp-route-demoId="@Model.Demo.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a>
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-12 row">
+                <div class="col-10">
+                </div>
+                <!-- /.col -->
+                <div class="col-2">
+                    <a class="btn btn-secondary" asp-page="./Demos">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Products modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="DemoDetail.DemoId" value="@Model.Demo.Id" class="form-control" hidden />
+                        <div class="form-group col-md-12 row form-check">
+                            <label class="control-label col-md-12">Crop Protection Or Animal Health?</label>
+                            <label class="control-label col-md-3">Crop Protection</label>
+                            <input type="radio" name="businessline" class="col-md-2" value="IsCP" />
+                            <label class="control-label col-md-3">Animal Health</label>
+                            <input type="radio" name="businessline" class="col-md-2" value="IsAH" />
+                        </div>
+                        <div class="form-group col-md-12 demodetail">
+                            <label asp-for="DemoDetail.CropAndAnimalId" class="control-label forcp">Crop</label>
+                            <label asp-for="DemoDetail.CropAndAnimalId" class="control-label forah">Animal</label>
+                            <div class="row">
+                                <select id="ddlCropAndAnimals" asp-for="DemoDetail.CropAndAnimalId" name="DemoDetail.CropAndAnimalId" asp-items="ViewBag.CropAndAnimals" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Crop / Animal  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="DemoDetail.CropAndAnimalId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12 demodetail">
+                            <label asp-for="DemoDetail.PestAndDiseaseId" class="control-label"> Target Pest / Disease</label>
+                            <div class="row">
+                                <select id="ddlPestAndDiseases" asp-for="DemoDetail.PestAndDiseaseId" name="DemoDetail.PestAndDiseaseId" asp-items="ViewBag.PestAndDiseases" class="form-control" style="width: 100%">
+                                    <option value="">--  Select PestAndDisease  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="DemoDetail.PestAndDiseaseId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12 demodetail">
+                            <label asp-for="DemoDetail.CropAndAnimalId" class="control-label forcp">Land in Ha.</label>
+                            <label asp-for="DemoDetail.CropAndAnimalId" class="control-label forah">No. Of Animals</label>
+                            <input asp-for="DemoDetail.RequestedQuantityOfSample" class="form-control"  id="Sample"/>
+                            <span asp-validation-for="DemoDetail.RequestedQuantityOfSample" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12 demodetail">
+                            <label asp-for="DemoDetail.RequestedNumberOfDemos" class="control-label">No. Times Applied</label>
+                            <input asp-for="DemoDetail.RequestedNumberOfDemos" class="form-control" />
+                            <span asp-validation-for="DemoDetail.RequestedNumberOfDemos" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12 demodetail">
+                            <label asp-for="DemoDetail.ProductId">Product</label>
+                            <div class="row">
+                                <select id="ddlProducts" asp-for="DemoDetail.ProductId" name="DemoDetail.ProductId" asp-items="ViewBag.Products" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Product  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="DemoDetail.ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12 demodetail">
+                            <label asp-for="DemoDetail.CompetingProductId">Competing Product</label>
+                            <div class="row">
+                                <select id="ddlCompetingProducts" asp-for="DemoDetail.CompetingProductId" name="DemoDetail.CompetingProductId" asp-items="ViewBag.CompetingProducts" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Competing Product  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="DemoDetail.CompetingProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12 demodetail">
+                            <label asp-for="DemoDetail.SiteId">Site</label>
+                            <div class="row">
+                                <select id="ddlSites" asp-for="DemoDetail.SiteId" name="DemoDetail.SiteId" asp-items="ViewBag.Sites" class="form-control" style="width: 100%" required>
+                                    <option value="">--  Select Site  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="DemoDetail.SiteId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12 demodetail">
+                            <label asp-for="DemoDetail.Remarks" class="control-label">Comments</label>
+                            <input asp-for="DemoDetail.Remarks" class="form-control" />
+                            <span asp-validation-for="DemoDetail.Remarks" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AddDetails" asp-route-id="@Model.Demo.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Product Requisition modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="RequisitionModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Product Requisition</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="DemoProductRequisition.DemoId" value="@Model.Demo.Id" class="form-control" hidden />
+                        <div class="form-group col-md-12">
+                            <label asp-for="DemoProductRequisition.StockistId">Stockist</label>
+                            <div class="row">
+                                <select id="ddlStockists" asp-for="DemoProductRequisition.StockistId" name="DemoProductRequisition.StockistId" asp-items="ViewBag.Stockists" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Stockist  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="DemoProductRequisition.StockistId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="DemoProductRequisition.ProductId">Product</label>
+                            <div class="row">
+                                <select id="ddlDemoProducts" asp-for="DemoProductRequisition.ProductId" name="DemoProductRequisition.ProductId" asp-items="ViewBag.DemoProducts" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Product  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="DemoProductRequisition.ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="DemoProductRequisition.Quanitity" class="control-label"></label>
+                            <input asp-for="DemoProductRequisition.Quanitity" class="form-control" />
+                            <span asp-validation-for="DemoProductRequisition.Quanitity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="DemoProductRequisition.TotalPrice" class="control-label"></label>
+                            <input asp-for="DemoProductRequisition.TotalPrice" class="form-control" />
+                            <span asp-validation-for="DemoProductRequisition.TotalPrice" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Upload" class="control-label">Upload File</label>
+                            <input asp-for="Upload" class="form-control" id="UploadId"/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="ProductRequisition" asp-route-id="@Model.Demo.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $(".dataTable").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false, "orderCellsTop": true,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlProducts").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlProducts", function () {
+            $("input[name=ProductId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlCropAndAnimals").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlCropAndAnimals", function () {
+            $("input[name=CropAndAnimalId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlPestAndDiseases").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlPestAndDiseases", function () {
+            $("input[name=PestAndDiseaseId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlCompetingProducts").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlCompetingProducts", function () {
+            $("input[name=CompetingProductId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlSites").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlSites", function () {
+            $("input[name=SiteId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlStockists").select2({
+                dropdownParent: $("#RequisitionModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlStockists", function () {
+            $("input[name=StockistId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlDemoProducts").select2({
+                dropdownParent: $("#RequisitionModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlDemoProducts", function () {
+            $("input[name=DemoProductId]").val($(this).find("option:selected").text());
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(".demodetail").hide();
+            $(".forcp").hide();
+            $(".forah").hide();
+        });
+        $("body").on("change", "input:radio[name=businessline]", function () {
+            //$('input:radio[name=businessline]:checked').change(function () {
+            if ($("input[name='businessline']:checked").val() == 'IsCP') {
+                console.log("HI");
+                $(".demodetail").show();
+                $(".forah").hide();
+                $(".forcp").show();
+            }
+            if ($("input[name='businessline']:checked").val() == 'IsAH') {
+                $(".demodetail").show();
+                $(".forah").show();
+                $(".forcp").hide();
+            }
+        });
+    </script>
+    <script>
+        var file = document.getElementById('UploadId');
+
+        file.onchange = function(e) {
+          var ext = this.value.match(/\.([^\.]+)$/)[1];
+          switch (ext) {
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'pdf':
+              console.log("Correct File Format, Allowed");
+              break;
+            default:
+              alert('Not allowed');
+              this.value = '';
+          }
+        };
+    </script>

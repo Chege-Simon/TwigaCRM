@@ -1,0 +1,408 @@
+﻿@page
+@model TwigaCRM.Pages.Plans.DetailsModel
+
+@{
+    ViewData["Title"] = "Route Plan - Details";
+    bool CanFOAApprove = false;
+    bool CanCreate = false;
+
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "foa_approve_route_plan")
+            {
+                CanFOAApprove = true;
+                break;
+            }
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "create_route_plan")
+            {
+                CanCreate = true;
+                break;
+            }
+        }
+    }
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+
+<div id="map_canvas" style="height: 90%; top: 60px; border: 1px solid black;">
+</div>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Route Plan Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.Plan.SalesPerson.FirstName @Model.Plan.SalesPerson.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Plan.SalesPerson.PhoneNumber
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.Plan.SalesPerson.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Region: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Plan.SalesPerson.Town.Region.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Town: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Plan.SalesPerson.Town.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Start Date: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Plan.StartDate</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-4 row">
+
+                    <div class="col-md-6">
+                        <label>F.O.A Approval Status: </label>
+                    </div>
+                    <div class="col-md-6 text-primary">
+                        <p>@Model.Plan.FOAstatus</p>
+                    </div>
+                    <hr/>
+                    @if (Model.Plan.IsSubmitted == false && CanCreate)
+                    {
+                        <div>
+                            <a asp-page="../Plans/Submit" asp-route-id="@Model.Plan.Id" class="btn btn-primary rounded">Submit Route Plan</a>
+                        </div>
+                    }else{
+                        <div>
+                            <a disabled class="btn btn-secondary rounded">Submit Route Plan</a>
+                        </div>
+                    }
+                    @if (CanFOAApprove && Model.Plan.IsSubmitted)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="FOAstatus" class="control-label col">Plan F.O.A Approval Status</label>
+                                <select asp-for="FOAstatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="FOAApprove" asp-route-id="@Model.Plan.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="col-md-2"></div>
+                <div class="col-md-8 row">
+                    <div class="row col-12">
+                        <label for="remarks_history" class="col-12">Remarks History:</label>
+
+                        <textarea disabled asp-for=@Model.Plan.Remarks class="col-12" rows="6"> </textarea>
+                    </div>
+                    <form method="post" class="col-md-12">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Remarks" class="control-label">Add Remarks</label>
+                            <input asp-for="Remarks" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" asp-page-handler="AddRemarks" asp-route-id="@Model.Plan.Id" class="btn btn-primary" id="Add">Add Remarks</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Route</h3>
+                            <span class="col-md-3">
+                                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add Route</a>
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Plan.Routes[0].Day)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Plan.Routes[0].RouteDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Plan.Routes[0].Zone)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Plan.Routes[0].Activity)
+                                    </th>
+                                    <th>
+                                        Approved
+                                    </th>
+                                    <th>
+                                        Location Pinned
+                                    </th>
+                                    <th style="width: 20%">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Plan.Routes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Day)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.RouteDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Zone.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Activity)
+                                        </td>
+                                    <td class="text-success">
+                                            @if (Model.Plan.IsSubmitted && CanFOAApprove)
+                                                @if (item.IsFOAApproved)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                    </td>
+                                    <td>
+                                            @if (item.ActualLat != null && item.ActualLong != null)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                        </td>
+                                         <td class="row">
+                                            @if (Model.Plan.IsSubmitted)
+                                            {     
+                                                 <a asp-page="../Routes/Approve" asp-route-id="@item.Id" asp-route-planId="@item.Plan.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-md-3"><i class="fa fa-check" aria-hidden="true"></i></a>
+                                                <span>|</span>
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-md-2"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                                            }
+                                            else
+                                            {
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-md-2"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                                                <a asp-page="../Routes/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-md-3"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+
+                                                <span>|</span>
+                                            }
+                                            @if (Model.Plan.FOAstatus == "Approved")
+                                            {
+                                                @*New Invisible Location Form modal*@
+                                                <form method="post" class="col-md-4 text-center">
+                                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                   @* <input asp-for="LocationRoute.PlanId" value="@Model.PlanId" class="form-control" type="hidden" />
+                                                    <input asp-for="LocationRoute.Id" value="@item.Id" class="form-control" type="hidden" />*@
+                                                    <input name="ActualLat" asp-for="ActualLat" class="form-control" type="hidden" />
+                                                    <input name="ActualLong" asp-for="ActualLong" class="form-control" type="hidden" />
+                                                    <button type="submit" asp-page-handler="AddLocation" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Pin Location" class="col-md-12" id="submit"><i class="fa fa-map-marker" aria-hidden="true"></i></button>
+                                                </form>
+
+                                                <span>|</span>
+                                            }else{
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Pin Location" class="col-md-3 text-secondary"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
+
+                                                <span>|</span>
+                                            }
+                                            @{
+                                                string locationUrl = "https://maps.google.com/?q=" + item.ActualLat + "," + item.ActualLong;
+                                            }
+                                            @if (item.ActualLat != null && item.ActualLong != null)
+                                            {
+                                                
+                                                <a data-toggle="tooltip" data-placement="top" title="View Location" class="col-md-2" href="@locationUrl" target="_blank"><i class="fa fa-location-arrow" aria-hidden="true"></i></a>
+                                            }else{
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't View Location" class="col-md-2 text-secondary"><i class="fa fa-location-arrow" aria-hidden="true"></i></a>
+                                            }
+                                         </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./Plans">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*New Daily Movement modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Route</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Route.PlanId" class="control-label">Plan Start Date</label>
+                            <input asp-for="Route.PlanId" value="@Model.PlanId" class="form-control" type="hidden"/>
+                            <input disabled value="@Model.Plan.StartDate" class="form-control" />
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Route.RouteDate">Zone </label>
+                            <div class="row">
+                                <select id="ddlDays" asp-for="Route.RouteDate" name="Route.RouteDate" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Date & Day  --</option>
+                                    <option value="@Model.Plan.StartDate.AddDays(0)">@Model.Plan.StartDate.AddDays(0).DayOfWeek - @Model.Plan.StartDate.AddDays(0)</option>
+                                    <option value="@Model.Plan.StartDate.AddDays(1)">@Model.Plan.StartDate.AddDays(1).DayOfWeek - @Model.Plan.StartDate.AddDays(1)</option>
+                                    <option value="@Model.Plan.StartDate.AddDays(2)">@Model.Plan.StartDate.AddDays(2).DayOfWeek - @Model.Plan.StartDate.AddDays(2)</option>
+                                    <option value="@Model.Plan.StartDate.AddDays(3)">@Model.Plan.StartDate.AddDays(3).DayOfWeek - @Model.Plan.StartDate.AddDays(3)</option>
+                                    <option value="@Model.Plan.StartDate.AddDays(4)">@Model.Plan.StartDate.AddDays(4).DayOfWeek - @Model.Plan.StartDate.AddDays(4)</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Route.RouteDate" class="text-danger"></span>
+                        </div>
+                      @*  <div class="form-group">
+                            <label asp-for="Route.Day" class="control-label"></label>
+                            <input disabled asp-for="Route.Day" value="@Model.LastRecordedRoute.RouteDate.AddDays(1).DayOfWeek" class="form-control" />
+                            <span asp-validation-for="Route.Day" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Route.RouteDate" class="control-label"></label>
+                            <input disabled value="@Model.LastRecordedRoute.RouteDate.AddDays(1)" class="form-control" />
+                            <input type="hidden" asp-for="LastRecordedRoute.RouteDate" class="form-control" />
+                            <span asp-validation-for="Route.RouteDate" class="text-danger"></span>
+                        </div>*@
+                        <div class="form-group col-md-12">
+                            <label asp-for="Route.ZoneId">Zone </label>
+                            <div class="row">
+                                <select id="ddlZones" asp-for="Route.ZoneId" name="Route.ZoneId" asp-items="ViewBag.Zones" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Zone  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Route.ZoneId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Route.Activity" class="control-label"></label>
+                            <input asp-for="Route.Activity" class="form-control" />
+                            <span asp-validation-for="Route.Activity" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlZones").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlDays").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlZones", function () {
+            $("input[name=ZoneId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var startPos;
+                var geoSuccess = function (position) {
+                    startPos = position;
+                    console.log(startPos.coords.latitude);
+                    console.log(startPos.coords.longitude);
+                $("input[name=ActualLat]").val(startPos.coords.latitude);
+                $("input[name=ActualLong]").val(startPos.coords.longitude);
+                $("#locationForm").submit();
+                };
+                navigator.geolocation.getCurrentPosition(geoSuccess);
+        });
+    </script>
+        @*<script src="https://cdn.jsdelivr.net/gh/bigdatacloudapi/js-reverse-geocode-client@latest/bigdatacloud_reverse_geocode.min.js" type = "text/javascript" ></script>*@
+    <script type="text/javascript">
+        //THIS WORKS ALRIGHT TOO
+        /* Initialise Reverse Geocode API Client */
+        //var reverseGeocoder = new BDCReverseGeocode();
+
+        ///* Get the current user's location information, based on the coordinates provided by their browser */
+        ///* Fetching coordinates requires the user to be accessing your page over HTTPS and to allow the location prompt. */
+        //reverseGeocoder.getClientLocation(function (result) {
+        //    console.log(result);
+        //});
+
+        ///* Get the administrative location information using a set of known coordinates */
+        //reverseGeocoder.getClientLocation({
+        //    latitude: startPos.coords.latitude,
+        //    longitude: startPos.coords.longitude,
+        //}, function (result) {
+        //    console.log(result);
+        //});
+
+        ///* You can also set the locality language as needed */
+        //reverseGeocoder.localityLanguage = 'es';
+
+        ///* Request the current user's coordinates (requires HTTPS and acceptance of prompt) */
+        //reverseGeocoder.getClientCoordinates(function (result) {
+        //    console.log(result);
+        //});
+
+    </script>
+  

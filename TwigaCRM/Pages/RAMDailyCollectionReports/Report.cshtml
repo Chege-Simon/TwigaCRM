@@ -1,0 +1,154 @@
+﻿@page
+@model TwigaCRM.Pages.RAMDailyCollectionReports.ReportModel
+
+@{
+    ViewData["Title"] = "D.C.R Report";
+
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center row">
+            <p class="h2 col-md-9">D.M.R Report</p>
+            <p class="col-md-3">
+            </p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <form class="form-row" method="post">
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.StartDate">Start Date</label>
+                            <input asp-for="Input.StartDate" class="form-control" />
+                            <span asp-validation-for="Input.StartDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.EndDate">End Date</label>
+                            <input asp-for="Input.EndDate" class="form-control" />
+                            <span asp-validation-for="Input.EndDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <button type="submit" asp-page="./DMReports" class="btn btn-primary mb-2">Generate Report</button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+
+            <br />
+            <hr />
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            @if (Model.RAMDailyCollections.Count() >= 1)
+                            {
+                                <h3 class="card-title col-md-9">D.C.R Report (@Model.StartedDate.ToLongDateString() - @Model.EndedDate.ToLongDateString())</h3>
+                            }
+                            else
+                            {
+                                <h3 class="card-title col-md-9">No Data</h3>
+                            }
+                            <span class="col-md-3">
+
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMDailyCollections[0].MainDistributor)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMDailyCollections[0].DailyAmount)
+                                    </th>
+                                    <th>
+                                        Is Targeted
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMDailyCollections[0].MainDistributor.Town.Region)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMDailyCollections[0].MainDistributor.Town)
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.RAMDailyCollections)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MainDistributor.SiteName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DailyAmount)
+                                        </td>
+                                        <td>
+                                            @if (Model.RAMCollectionTargetMappings.Count() > 0)
+                                            {
+                                                @foreach (var target in Model.RAMCollectionTargetMappings)
+                                                {
+                                                    if (target.MainDistributorId == item.MainDistributorId && target.RAMCollectionTarget.RAMId == item.RAMDailyCollectionReport.RAMId && (target.RAMCollectionTarget.CreateAt.Month == item.RAMDailyCollectionReport.SalesDate.Month || target.RAMCollectionTarget.UpdateAt.Month == item.RAMDailyCollectionReport.SalesDate.Month))
+                                                    {
+                                                        <span>Yes</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>No</span>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>No</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MainDistributor.Town.Region.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MainDistributor.Town.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.RAMDailyCollectionReport.SalesDate.Date)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./DCReports">Back</a>
+                    </div>
+                </div>
+                  </div>
+            </div>
+        </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

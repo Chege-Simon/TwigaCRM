@@ -1,0 +1,378 @@
+﻿@page
+@model TwigaCRM.Pages.CropsAndAnimals.DetailsModel
+
+@{
+    ViewData["Title"] = @Model.CropAndAnimal.Type + " Details";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Crop / Animal Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="">
+                        <h5>
+                            @Model.CropAndAnimal.Name
+                        </h5>
+                        <h6 class="text-primary">
+                            @Model.CropAndAnimal.Type
+                        </h6>
+                        <br /> 
+                        <p class="">SECTOR : <span>@Model.CropAndAnimal.Sector.NormalizedName</span></p>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <a asp-page="./Edit" asp-route-id="@Model.CropAndAnimal.Id" class="btn btn-secondary rounded">Edit</a>
+                </div>
+            </div>
+            <br />
+            <div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Detils</a>
+                    </li>
+                </ul>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Name</label>
+                        </div>
+                        <div class="col-md-9 text-primary">
+                            <p>@Model.CropAndAnimal.Name</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Type</label>
+                        </div>
+                        <div class="col-md-9 text-primary">
+                            <p>@Model.CropAndAnimal.Type</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Sector (Normalized Name)</label>
+                        </div>
+                        <div class="col-md-9 text-primary">
+                            <p>@Model.CropAndAnimal.Sector.NormalizedName</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Sector (Description)</label>
+                        </div>
+                        <div class="col-md-9 text-primary">
+                            <p>@Model.CropAndAnimal.Sector.Description</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Products</h3>
+                            <span class="col-md-3">
+                                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#AssignProductModal">Assign Product</a>
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                         Name
+                                    </th>
+                                    <th>
+                                         Description
+                                    </th>
+                                    <th>
+                                        Code
+                                    </th>
+                                    <th>
+                                        Unit of Measure
+                                    </th>
+                                    <th>
+                                        Packaging Size
+                                    </th>
+                                    <th>
+                                        Business Line
+                                    </th>
+                                    <th>
+                                        Servings
+                                    </th>
+                                    <th>
+                                        No. OF Time Applied (Monthly)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var cropandanimalproduct in Model.CropAndAnimal.ProductsCropsAndAnimals)
+                            {
+                                <tr>
+                                        @foreach (var product in Model.Products)
+                                        {
+                                            @if (product.Id == cropandanimalproduct.ProductId)
+                                            {
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => product.Name)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => product.Description)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => product.Code)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => product.UnitOfMeasure)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => product.PackagingSize)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => product.BusinessLine.NormalizedName)
+                                                </td>
+                                                <td>
+                                                    @if (Model.CropAndAnimal.Type == "Animal")
+                                                    {
+                                                        <span>@cropandanimalproduct.Servings </span>
+                                                        <span> per 1 </span>
+                                                        <span>@Model.CropAndAnimal.Name</span>
+                                                    }
+                                                    else if(Model.CropAndAnimal.Type == "Crop")
+                                                    {
+                                                        <span>@cropandanimalproduct.Servings </span>
+                                                        <span> per 1 </span>
+                                                        <span>@Model.CropAndAnimal.Name</span>
+                                                    }
+
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => cropandanimalproduct.NoOfTimeApplied)
+                                                </td>
+                                            }
+                                        }
+                                    <td class="row">
+                                        @*<a asp-page="./Edit" asp-route-id="@customerProduct.Id"data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |*@
+                                        <a asp-page="../ProductsCropsAndAnimals/Delete" asp-route-id="@cropandanimalproduct.Id" asp-route-cropandanimalId="@Model.CropAndAnimal.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a> 
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                    </div>
+                     <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Pests And Diseases</h3>
+                            <span class="col-md-3">
+                                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#AssignPestAndDiseaseModal">Assign Pest / Disease</a>
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                         Name
+                                    </th>
+                                    <th>
+                                        Description
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var cropandanimalpestanddisease in Model.CropAndAnimal.CropsAndAnimalsPestsAndDiseases)
+                            {
+                                <tr>
+                                        @foreach (var pestanddisease in Model.PestsAndDiseases)
+                                        {
+                                            @if (pestanddisease.Id == cropandanimalpestanddisease.PestAndDiseaseId)
+                                            {
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => pestanddisease.Name)
+                                                 </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => pestanddisease.Description)
+                                                 </td>
+                                            }
+                                        }
+                                    <td class="row">
+                                        @*<a asp-page="./Edit" asp-route-id="@customerSector.Id"data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |*@
+                                        <a asp-page="../CropsAndAnimalsPestsAndDiseases/Delete" asp-route-id="@cropandanimalpestanddisease.Id" asp-route-cropandanimalId="@Model.CropAndAnimal.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a> 
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./CropsAndAnimals">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Assign Product modal*@
+<div class="modal fade" role="dialog" id="AssignProductModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="ProductCropAndAnimal.CropAndAnimalId" class="control-label">Name</label>
+                            <input asp-for="ProductCropAndAnimal.CropAndAnimalId" class="form-control" value="@Model.CropAndAnimal.Id" hidden/>
+                            <input type="text" class="form-control" value="@Model.CropAndAnimal.Name" disabled />
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="ProductCropAndAnimal.ProductId">Product</label>
+                            <div class="row">
+                                <select id="ddlProducts" asp-for="ProductCropAndAnimal.ProductId" name="ProductCropAndAnimal.ProductId" asp-items="ViewBag.Products" class="form-control pb-1 col-12" style="width: 100%">
+                                    <option value="">--  Select Products  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="ProductCropAndAnimal.ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="ProductCropAndAnimal.Servings" class="control-label"></label>
+                            <input asp-for="ProductCropAndAnimal.Servings" class="form-control" />
+                            <span asp-validation-for="ProductCropAndAnimal.Servings" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="ProductCropAndAnimal.NoOfTimeApplied" class="control-label">No. Of Times Applied (Monthly)</label>
+                            <input asp-for="ProductCropAndAnimal.NoOfTimeApplied" class="form-control" />
+                            <span asp-validation-for="ProductCropAndAnimal.NoOfTimeApplied" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AssignProduct" asp-route-id="@Model.CropAndAnimal.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Assign Sector modal*@
+<div class="modal fade" role="dialog" id="AssignPestAndDiseaseModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Pest / Disease</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="CropAndAnimalPestAndDisease.CropAndAnimalId" class="control-label">Name</label>
+                            <input asp-for="CropAndAnimalPestAndDisease.CropAndAnimalId" class="form-control" value="@Model.CropAndAnimal.Id" hidden/>
+                            <input type="text" class="form-control" value="@Model.CropAndAnimal.Name" disabled/>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="CropAndAnimalPestAndDisease.PestAndDiseaseId">Pest / Disease</label>
+                            <div class="row">
+                                <select id="ddlPestAndDiseases" asp-for="CropAndAnimalPestAndDisease.PestAndDiseaseId" name="CropAndAnimalPestAndDisease.PestAndDiseaseId" asp-items="ViewBag.PestsAndDiseases" class="form-control pb-1 col-12" style="width: 100%" >
+                                    <option value="">--  Select Pest / Disease  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="CropAndAnimalPestAndDisease.PestAndDiseaseId" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AssignPestAndDisease" asp-route-id="@Model.CropAndAnimal.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    $(document).ready(function(){
+        $(".dataTable").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false, "orderCellsTop" : true,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+});
+</script>
+<script>
+    $(document).ready(function() {
+      $("#ddlProducts").select2({
+              dropdownParent: $("#AssignProductModal")
+      });
+});
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlProducts").select2();
+    });
+    $("body").on("change", "#ddlProducts", function () {
+        $("input[name=ProductId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script>
+    $(document).ready(function() {
+      $("#ddlPestAndDiseases").select2({
+              dropdownParent: $("#AssignPestAndDiseaseModal")
+      });
+});
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlPestAndDiseases").select2();
+    });
+    $("body").on("change", "#ddlPestAndDiseases", function () {
+        $("input[name=PestAndDiseaseId]").val($(this).find("option:selected").text());
+    });
+</script>

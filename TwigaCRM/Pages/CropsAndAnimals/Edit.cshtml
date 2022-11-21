@@ -1,0 +1,88 @@
+﻿@page
+@model TwigaCRM.Pages.CropsAndAnimals.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Business Line</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CropAndAnimal.Id" />
+            <div class="form-group">
+                <label asp-for="CropAndAnimal.Name" class="control-label"></label>
+                <input asp-for="CropAndAnimal.Name" class="form-control" />
+                <span asp-validation-for="CropAndAnimal.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CropAndAnimal.Type" class="control-label"></label>
+                    <select asp-for="CropAndAnimal.Type" class="form-control">
+                        <option value="">-- Select Type --</option>
+                        <option value="Animal">Animal</option>
+                        <option value="Crop">Crop</option>
+                    </select>
+                <span asp-validation-for="CropAndAnimal.Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CropAndAnimal.SectorId" class="control-label"></label>
+                    <div class="row">
+                    <select id="ddlSectors" asp-for="CropAndAnimal.SectorId" name="CropAndAnimal.SectorId" asp-items="ViewBag.Sectors" class="form-control">
+                        <option value="">--  Select Sector  --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+<div>
+    <a asp-page="./CropsAndAnimals">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    $(document).ready(function() {
+      $("#ddlSectors").select2({
+              dropdownParent: $("#InputModal")
+      });
+});
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlSectors").select2();
+    });
+    $("body").on("change", "#ddlSectors", function () {
+        $("input[name=SectorId]").val($(this).find("option:selected").text());
+    });
+</script>

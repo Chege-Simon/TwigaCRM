@@ -1,0 +1,258 @@
+﻿@page
+@model TwigaCRM.Pages.Roles.DetailsModel
+
+@{
+    ViewData["Title"] = "Permission Assignments";
+    bool IsActive = false;
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-6"><span class="font-weight_bolder h2">@Html.DisplayFor(model => model.AppRole.Title)</span> Permission Assignments</h3>
+        <span class="col-md-2">
+            @*<input asp-for="@Model.AppRoleId" value="@Model.AppRole.Id" hidden/>*@
+        
+            @if (Model.AppRole.Id == 1 || Model.AppRole.Id == 2)
+            {
+                <a class="btn btn-primary" href="" id="Input" data-toggle="modal" data-target="#AssignAllModal">Assign All Permission</a>
+            }
+        </span>
+        <span class="col-md-2">
+            @*<input asp-for="@Model.AppRoleId" value="@Model.AppRole.Id" hidden/>*@
+        
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#AssignModal">Assign Permission</a>
+        </span>
+        <span class="col-md-2">
+            @*<input asp-for="@Model.AppRoleId" value="@Model.AppRole.Id" hidden/>*@
+        
+                    @if (Model.AppRole.Id != 1)
+                    {
+                        <a class="btn btn-danger" href="" id="Input" data-toggle="modal" data-target="#DisableModal">Disable Permission</a>
+                    }
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+            <table class="table table-bordered table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        Permissions
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+        @foreach (var permission in Model.Permissions) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => permission.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => permission.Description)
+                    </td>
+                    <td>
+                        @foreach (var AppRolePermission in Model.AppRolePermissions)
+                        {
+                                @if (AppRolePermission.PermissionId == permission.Id)
+                                {
+                                    IsActive = true;
+                                    break;
+                                }
+                                IsActive = false;
+                            }
+                        @if (IsActive)
+                        {
+                            <p>Active</p>
+                        }else
+                        {
+                            <p>Disabled</p>
+                        }
+                    </td>
+                    <td>
+                        @if (!IsActive)
+                        {
+                            <form method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <input asp-for="AppRolePermission.AppRoleId" class="form-control" value="@Model.AppRole.Id" hidden />
+                                <input asp-for="AppRolePermission.PermissionId" class="form-control" value="@permission.Id" hidden />
+                                <button asp-page-handler="AssignPermission" type="submit" id="submit" class="btn btn-primary col-12" data-toggle="tooltip" data-placement="top" title="Activate"><i class="fa fa-check" aria-hidden="true"></i></button>
+                            </form>
+                        }else if(Model.AppRole.Id != 1 && IsActive){
+                                    
+                            <form method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <input asp-for="EditAppRolePermission.AppRoleId" class="form-control" value="@Model.AppRole.Id" hidden />
+                                    <input asp-for="EditAppRolePermission.PermissionId" class="form-control" value="@permission.Id" hidden />
+                                <button asp-page-handler="RemovePermission" type="submit" id="submit" class="btn btn-danger col-12" data-toggle="tooltip" data-placement="top" title="Disable"><i class="fa fa-times" aria-hidden="true"></i></button>
+                            </form>
+                        }
+                </tr>
+        }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div>
+    <a asp-page="./Roles">Back to List</a>
+</div>
+
+
+@*All Permission Assignment modal*@
+<div class="modal fade" role="dialog" id="AssignAllModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Permission to @Model.AppRole.Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="AssignAppRolePermission.AppRoleId" class="control-label">Role</label>
+                            <input type="text" class="form-control" value="@Model.AppRole.Title" disabled/>
+                            <input asp-for="AssignAppRolePermission.AppRoleId" class="form-control" value="@Model.AppRole.Id" hidden/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit"asp-page-handler="AssignAllPermissions" class="btn btn-primary">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Permission Assignment modal*@
+<div class="modal fade" role="dialog" id="AssignModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Permission to @Model.AppRole.Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="AppRolePermission.AppRoleId" class="control-label">Role</label>
+                            <input type="text" class="form-control" value="@Model.AppRole.Title" disabled/>
+                            <input asp-for="AppRolePermission.AppRoleId" class="form-control" value="@Model.AppRole.Id" hidden/>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="AppRolePermission.PermissionId">Permission</label>
+                            <div class="row">
+                                <select id="ddlPermissions" asp-for="AppRolePermission.PermissionId" name="AppRolePermission.PermissionId" asp-items="@ViewBag.Permissions" class="form-control py-1" style="width:100%">
+                                    <option value="">--   Select Permission   --</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Disable Permission Assignment modal*@
+<div class="modal fade" role="dialog" id="DisableModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Permission to @Model.AppRole.Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="EditAppRolePermission.AppRoleId" class="control-label">Role</label>
+                            <input type="text" class="form-control" value="@Model.AppRole.Title" disabled/>
+                            <input asp-for="EditAppRolePermission.AppRoleId" class="form-control" value="@Model.AppRole.Id" hidden/>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="EditAppRolePermission.PermissionId" class="control-label">Permission</label>
+                            <select id="ddlEditPermissions" asp-for="EditAppRolePermission.PermissionId" name="EditAppRolePermission.PermissionId" asp-items="@ViewBag.Permissions" class="form-control py-1">
+                                <option value="">--   Select Permission   --</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit"asp-page-handler="RemovePermission" class="btn btn-primary">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    $(document).ready(function() {
+      $("#ddlPermissions").select2({
+              dropdownParent: $("#AssignModal")
+      });
+});
+</script>
+<script>
+    $(document).ready(function() { $("#ddlEditPermissions").select2({ dropdownParent: $("#DisableModal") }); });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlPermissions").select2();
+    });
+    $("body").on("change", "#ddlPermissions", function () {
+        $("input[name=PermissionId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlPermissions").select2();
+    });
+    $("body").on("change", "#ddlPermissions", function () {
+        $("input[name=EditPermissionId]").val($(this).find("option:selected").text());
+    });
+</script>

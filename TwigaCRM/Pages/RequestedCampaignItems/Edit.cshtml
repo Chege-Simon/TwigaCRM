@@ -1,0 +1,133 @@
+﻿@page
+@model TwigaCRM.Pages.RequestedCampaignItems.EditModel
+
+@{
+    ViewData["Title"] = "Requested Campaign Materials";
+    decimal Spent = 0;
+    @foreach(var expense in Model.RequestedCampaignItems)
+    {
+        Spent += expense.FOAApprovedPrice;                      
+    }
+    @foreach (var expense in Model.RequestedExpenses)
+    {
+        Spent += expense.ApprovedAmount;                      
+    }
+    bool CanHRMApprove = false;
+
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "hrm_approve_campaign")
+            {
+                CanHRMApprove = true;
+                break;
+            }
+        }
+    }
+}
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <style>
+        .select2-selection__rendered {
+            line-height: 31px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 34px !important;
+        }
+    </style>
+    <div class="container">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <p class="h2">Approve Requested Campaign Materials</p>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <h5 class="col-md-12">
+                                <label>Campaign Title:</label>
+                                @Model.RequestedCampaignItem.Campaign.Title
+                            </h5>
+                            <h6 class="text-primary col-md-12">
+                                @Model.RequestedCampaignItem.Campaign.Description
+                            </h6>
+                            <hr />
+                            <p class="col-md-12">TYPE : <span>@Model.RequestedCampaignItem.Campaign.CampaignType</span></p>
+                            <div class="col-md-3">
+                                <label>Budget: </label>
+                            </div>
+                            <div class="col-md-3 text-primary">
+                                <p>@Model.RequestedCampaignItem.Campaign.CampaignBudget.Description: @Model.RequestedCampaignItem.Campaign.CampaignBudget.FinancialYear.StartDate.Year - @Model.RequestedCampaignItem.Campaign.CampaignBudget.FinancialYear.EndDate.Year</p>
+                                @if (CanHRMApprove)
+                                {
+                                    <p>
+                                        KSh @String.Format("{0:#,##0.00}", @Model.RequestedCampaignItem.Campaign.CampaignBudget.Amount)
+                                    </p>
+                                }
+                            </div>
+                            <div class="col-md-6"></div>
+                            <div class="col-md-3">
+                                <label>Campaign Item: </label>
+                            </div>
+                            <div class="col-md-3 text-primary">
+                                <p>@Model.RequestedCampaignItem.CampaignItem.Name</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 row">
+                        <div class="col-2"></div>
+                        <div class="col-10 row">
+                            <div class="col-md-6">
+                                <label>Budget Balance: </label>
+                            </div>
+                            <div class="col-md-6 text-primary">
+                                @if (CanHRMApprove)
+                                {
+                                    <p> KSh @String.Format("{0:#,##0.00}", (Model.RequestedCampaignItem.Campaign.CampaignBudget.Amount - Spent))</p>
+                                }
+                            </div>
+                        </div>
+
+                        <hr />
+
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="RequestedCampaignItem.Id" />
+                        <input type="hidden" asp-for="RequestedCampaignItem.CampaignId" />
+                        <input type="hidden" asp-for="RequestedCampaignItem.Campaign.Title" />
+                        <input type="hidden" asp-for="RequestedCampaignItem.Campaign.Description" />
+                        <input type="hidden" asp-for="RequestedCampaignItem.CampaignItemId" />
+                        <div class="form-group col-md-6">
+                            <label asp-for="RequestedCampaignItem.RequestedQuantity" class="control-label"></label>
+                            <input type="disabled" asp-for="RequestedCampaignItem.RequestedQuantity" class="form-control" />
+                            <span asp-validation-for="RequestedCampaignItem.RequestedQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="RequestedCampaignItem.FOAApprovedQuantity" class="control-label">Approved Quantity</label>
+                            <input asp-for="RequestedCampaignItem.FOAApprovedQuantity" class="form-control" />
+                            <span asp-validation-for="RequestedCampaignItem.FOAApprovedQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Approve" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="float:right">
+        <a asp-page="../Campaigns/Details" asp-route-id="@Model.RequestedCampaignItem.CampaignId">Back to Campaign Details</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

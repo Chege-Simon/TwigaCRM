@@ -1,0 +1,227 @@
+﻿@page
+@model TwigaCRM.Pages.RAMCollectionTargets.IndexModel
+
+@{
+    ViewData["Title"] = "R.A.M Collection Targets";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Collections Targets</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" data-toggle="modal" data-target="#InputModal">New Collection Target</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMCollectionTargets[0].FinancialYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMCollectionTargets[0].RAM)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMCollectionTargets[0].Month)
+            </th>
+            <th>
+                Submitted
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMCollectionTargets[0].ApprovalStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMCollectionTargets[0].UpdateAt)
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.RAMCollectionTargets) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinancialYear.StartDate.Year)
+                <span>-</span>
+                @Html.DisplayFor(modelItem => item.FinancialYear.EndDate.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RAM.FirstName)
+                @Html.DisplayFor(modelItem => item.RAM.LastName)
+            </td>
+            <td>
+                @switch(item.Month){
+                    case 1:
+                        <span>JAN</span>;
+                        break;
+                    case 2:
+                        <span>FEB</span>;
+                        break;
+                    case 3:
+                        <span>MAR</span>;
+                        break;
+                    case 4:
+                        <span>APR</span>;
+                        break;
+                    case 5:
+                        <span>MAY</span>;
+                        break;
+                    case 6:
+                        <span>JUN</span>;
+                        break;
+                    case 7:
+                        <span>JUL</span>;
+                        break;
+                    case 8:
+                        <span>AUG</span>;
+                        break;
+                    case 9:
+                        <span>SEP</span>;
+                        break;
+                    case 10:
+                        <span>OCT</span>;
+                        break;
+                    case 11:
+                        <span>NOV</span>;
+                        break;
+                    case 12:
+                        <span>DEC</span>;
+                        break;
+                }
+            </td>
+            <td>
+                @if (item.IsSubmitted){
+                    <span>Yes</span>
+                }else{
+                    <span>No</span>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApprovalStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateAt)
+            </td>
+            <td class="row">
+                @if (item.IsSubmitted)
+                {
+                    <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                    <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                }
+                else
+                {
+                    <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <span>|</span>
+                    <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+        </table>
+    </div>
+</div>
+
+@*New Daily Movement modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Collections Movement Target</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="RAMCollectionTarget.FinancialYearId">Financial Year</label>
+                            <div class="row">
+                                <select id="ddlFinancialYears" asp-for="RAMCollectionTarget.FinancialYearId" name="RAMCollectionTarget.FinancialYearId" asp-items="ViewBag.FinancialYears" class="form-control" style="width: 100%">
+                                    <option value="">--  Select FinancialYears  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="RAMCollectionTarget.FinancialYearId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="RAMCollectionTarget.RAMId" class="control-label">R.A.M: </label>
+                            <input class="form-control" value="@Model.AppUser.FirstName @Model.AppUser.LastName" disabled />
+                            <input asp-for="RAMCollectionTarget.RAMId" class="form-control" value="@Model.AppUser.Id" type="hidden" />
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="RAMCollectionTarget.Month" class="control-label"></label>
+                            <select asp-for="RAMCollectionTarget.Month" class="form-control">
+                                <option value="">-- Select Month --</option>
+                                <option value="1">JAN</option>
+                                <option value="2">FEB</option>
+                                <option value="3">MAR</option>
+                                <option value="4">APR</option>
+                                <option value="5">MAY</option>
+                                <option value="6">JUN</option>
+                                <option value="7">JUL</option>
+                                <option value="8">AUG</option>
+                                <option value="9">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select>
+                            <span asp-validation-for="RAMCollectionTarget.Month" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlFinancialYears").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlRAMs").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlFinancialYears", function () {
+            $("input[name=FinancialYearId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlRAMs", function () {
+            $("input[name=RAMId]").val($(this).find("option:selected").text());
+        });
+    </script>

@@ -1,0 +1,91 @@
+﻿@page
+@model TwigaCRM.Pages.Demos.EditModel
+
+@{
+    ViewData["Title"] = "Edit - Demo";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Demo</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Demo.Id" />
+                <input type="hidden" asp-for="Demo.Remarks" />
+                <div class="form-group col-md-12">
+                    <label asp-for="Demo.SalesPersonId" class="control-label">Sales Person</label>
+                    <input class="form-control" value="@Model.AppUser.FirstName @Model.AppUser.LastName" disabled />
+                    <input asp-for="Demo.SalesPersonId" class="form-control" value="@Model.AppUser.Id" type="hidden" />
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="Demo.Title" class="control-label"></label>
+                    <input asp-for="Demo.Title" class="form-control" />
+                    <span asp-validation-for="Demo.Title" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="Demo.Description" class="control-label"></label>
+                    <input asp-for="Demo.Description" class="form-control" />
+                    <span asp-validation-for="Demo.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Demo.StartDate" class="control-label"></label>
+                    <input asp-for="Demo.StartDate" class="form-control" />
+                    <span asp-validation-for="Demo.StartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Demo.EndDate" class="control-label"></label>
+                    <input asp-for="Demo.EndDate" class="form-control" />
+                    <span asp-validation-for="Demo.EndDate" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="Demo.DemoType" class="control-label"></label>
+                    <select asp-for="Demo.DemoType" class="form-control" style="width:100%">
+                        <option value="">-- select Demo Type --</option>
+                        <option value="Method">Method</option>
+                        <option value="Result">Result</option>
+                        <option value="Both">Both</option>
+                    </select>
+                    <span asp-validation-for="Demo.DemoType" class="text-danger"></span>
+                </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Demos">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

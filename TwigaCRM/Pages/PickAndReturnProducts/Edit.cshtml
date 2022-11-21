@@ -1,0 +1,70 @@
+﻿@page
+@model TwigaCRM.Pages.PickAndReturnProducts.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Pick And Return Form</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PickAndReturnProduct.Id" />
+            <input type="hidden" asp-for="PickAndReturnProduct.PickAndReturnFormId" />
+            <div class="form-group col-md-12">
+                <label asp-for="PickAndReturnProduct.ProductId">Product</label>
+                <div class="row">
+                    <select id="ddlProducts" asp-for="PickAndReturnProduct.ProductId" name="PickAndReturnProduct.ProductId" asp-items="ViewBag.Products" class="form-control" style="width: 100%">
+                        <option value="">--  Select Products  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="PickAndReturnProduct.ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PickAndReturnProduct.PickedQuantity" class="control-label"></label>
+                <input asp-for="PickAndReturnProduct.PickedQuantity" class="form-control" />
+                <span asp-validation-for="PickAndReturnProduct.PickedQuantity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PickAndReturnProduct.ReturnedQuantity" class="control-label"></label>
+                <input asp-for="PickAndReturnProduct.ReturnedQuantity" class="form-control" />
+                <span asp-validation-for="PickAndReturnProduct.ReturnedQuantity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="../PickAndReturnForms/Details" asp-route-id="@Model.PickAndReturnProduct.PickAndReturnFormId">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+    <script>
+        $(document).ready(function () {
+            $("#ddlProducts").select2();
+        });
+    </script>
+
+    <script type="text/javascript">
+        $("body").on("change", "#ddlProducts", function () {
+            $("input[name=ProductId]").val($(this).find("option:selected").text());
+        });
+    </script>

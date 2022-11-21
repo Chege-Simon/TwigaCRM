@@ -1,0 +1,117 @@
+﻿@page
+@model TwigaCRM.Pages.ExpenseReceipts.IndexModel
+
+@{
+    ViewData["Title"] = "Expense Receipts";
+}
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Expense Receipts</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add Receipt</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpenseReceipts[0].DocumentUrl)
+            </th>
+            <th>
+                Expense Category
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpenseReceipts[0].RequestedExpense)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpenseReceipts[0].UpdateAt)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.ExpenseReceipts) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestedExpense.ExpenseCategory.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestedExpense.RequestedAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateAt)
+            </td>
+            <td class="row">
+                <a asp-page="./ExpenseReceipts" asp-page-handler="DownloadFile" asp-route-fileName="@item.DocumentUrl" data-toggle="tooltip" data-placement="top" title="Download Receipt" class="col-5"><i class="fa fa-download" aria-hidden="true"></i></a> <span>|</span>
+                <a asp-page="./Delete" asp-route-id="@item.Id" asp-page-handler="DownloadFile" asp-route-fileName="@item.DocumentUrl" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+        </table>
+    </div>
+    <div style="float:right">
+        <a asp-page="../Campaigns/Details" asp-route-id="@Model.CampaignId">Back to Campaign Details</a>
+    </div>
+</div>
+
+@*New Receipt Assignment modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Receipt</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div>
+                            <input type="hidden" asp-for="ExpenseReceipt.RequestedExpenseId" />
+                            <input type="hidden" asp-for="CampaignId" />
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Upload" class="control-label">Upload File</label>
+                            <input asp-for="Upload" class="form-control" id=UploadId />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var file = document.getElementById('UploadId');
+
+    file.onchange = function (e) {
+        var ext = this.value.match(/\.([^\.]+)$/)[1];
+        switch (ext) {
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'pdf':
+                console.log("Correct File Format, Allowed");
+                break;
+            default:
+                alert('Not allowed');
+                this.value = '';
+        }
+    };
+</script>

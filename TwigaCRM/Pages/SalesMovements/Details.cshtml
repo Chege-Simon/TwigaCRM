@@ -1,0 +1,438 @@
+﻿@page
+@model TwigaCRM.Pages.SalesMovements.DetailsModel
+
+@{
+    ViewData["Title"] = "Details - M.T";
+    bool CanCreate = false;
+    bool CanTLApprove = false;
+    
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "create_MT")
+            {
+                CanCreate = true;
+                break;
+            }
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "tl_approve_MT")
+            {
+                CanTLApprove = true;
+                break;
+            }
+        }
+    }
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3"> Movement Target Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.SalesMovement.SalesPerson.FirstName @Model.SalesMovement.SalesPerson.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.SalesMovement.SalesPerson.PhoneNumber
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.SalesMovement.SalesPerson.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Region & Town: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <span>@Model.SalesMovement.SalesPerson.Town.Region.Name</span> - <span>@Model.SalesMovement.SalesPerson.Town.Name</span>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Financial Year: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <span>@Model.SalesMovement.FinancialYear.StartDate.Year</span> - <span>@Model.SalesMovement.FinancialYear.EndDate.Year</span>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Month: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            @switch(@Model.SalesMovement.Month){
+                                case 1:
+                                    <span>JAN</span>;
+                                    break;
+                                case 2:
+                                    <span>FEB</span>;
+                                    break;
+                                case 3:
+                                    <span>MAR</span>;
+                                    break;
+                                case 4:
+                                    <span>APR</span>;
+                                    break;
+                                case 5:
+                                    <span>MAY</span>;
+                                    break;
+                                case 6:
+                                    <span>JUN</span>;
+                                    break;
+                                case 7:
+                                    <span>JUL</span>;
+                                    break;
+                                case 8:
+                                    <span>AUG</span>;
+                                    break;
+                                case 9:
+                                    <span>SEP</span>;
+                                    break;
+                                case 10:
+                                    <span>OCT</span>;
+                                    break;
+                                case 11:
+                                    <span>NOV</span>;
+                                    break;
+                                case 12:
+                                    <span>DEC</span>;
+                                    break;
+                            }
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-4 row">
+                    <div class="col-md-6 ">
+                        <label>T.L Approval Status:</label>
+                    </div>
+                    <div class="col-md-6  text-primary">
+                        <p>@Model.SalesMovement.TLstatus</p>
+                    </div>
+                    <hr/>
+                    @if (Model.SalesMovement.IsSubmitted == false && CanCreate)
+                    {
+                        <div>
+                            <a asp-page="../SalesMovements/Submit" asp-route-id="@Model.SalesMovement.Id" class="btn btn-primary rounded">Submit S.M.T</a>
+                        </div>
+                    }else if (Model.SalesMovement.IsSubmitted == true && CanCreate){
+                        <div>
+                            <a disabled class="btn btn-secondary rounded">Submit S.M.T</a>
+                        </div>
+                    }
+                    <hr/>
+                    @if (CanTLApprove && Model.SalesMovement.IsSubmitted)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="TLstatus" class="control-label">S.M.T Approval Status</label>
+                                <select asp-for="TLstatus" class="form-control">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="TLApprove" asp-route-id="@Model.SalesMovement.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="col-md-2"></div>
+                <div class="col-md-8 row">
+                    <div class="row col-12">
+                        <label for="remarks_history" class="col-12">Remarks History:</label>
+
+                        <textarea disabled asp-for=@Model.SalesMovement.Remarks class="col-12" rows="6"> </textarea>
+                    </div>
+                    <form method="post" class="col-md-12">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Remarks" class="control-label">Add Remarks</label>
+                            <input asp-for="Remarks" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" asp-page-handler="AddRemarks" asp-route-id="@Model.SalesMovement.Id" class="btn btn-primary" id="Add">Add Remarks</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Targets</h3>
+                            <span class="col-md-3">
+
+                                @if (Model.SalesMovement.IsSubmitted == false && Model.SalesMovement.CreatorId == Model.AppUser.Id)
+                                {
+                                    <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add Target</a>
+                                }
+                                else
+                                {
+                                    <a disabled class="btn btn-secondary">Add Target</a>
+                                }
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        M.S.F / Corp
+                                    </th>
+                                    <th>
+                                        Crop Or Animal
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].Product)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].Product.Description)
+                                    </th>
+                                    <th>
+                                        Hectares / Count
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].Volume)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].BusinessPotential)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].Value)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].MarketShare) (%)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].UpdateAt)
+                                    </th>
+                                    <th>
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Targets)
+                                {
+                                    <tr>    
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TargetCustomer.SiteName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CropAndAnimal.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Product.Name)
+                                            <span> (</span>
+                                            @Html.DisplayFor(modelItem => item.Product.Code)
+                                            <span>)</span>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Product.Description)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CropAndAnimalQuantity)
+                                            @if (item.CropAndAnimal.Type == "Animal")
+                                            {
+                                                @item.CropAndAnimal.Name<span>(s)</span>
+                                            }
+                                            else if(item.CropAndAnimal.Type == "Crop"){
+                                                <span>Ha.</span>
+                                            }
+                                        </td>
+                                        <td>
+                                           @* @Html.DisplayFor(modelItem => item.Volume)*@
+                                            @String.Format("{0:#,##0.00}", item.Volume)
+                                        </td>
+                                        <td>
+                                            @*@Html.DisplayFor(modelItem => item.BusinessPotential)*@
+                                            @String.Format("{0:#,##0.00}", item.BusinessPotential)
+                                            @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                        </td>
+                                        <td>
+                                            @*@Html.DisplayFor(modelItem => item.Value)*@
+                                            KSh @String.Format("{0:#,##0.00}", item.Value)
+                                            @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                        </td>
+                                        <td>
+                                            @*@Html.DisplayFor(modelItem => item.MarketShare)*@
+                                            @String.Format("{0:#,##0.00}", item.MarketShare) %
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.UpdateAt)
+                                        </td>
+                                         <td class="row">
+                                            @if (Model.SalesMovement.IsSubmitted)
+                                            {
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-5"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-page="../Targets/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <span>|</span>
+                                                <a asp-page="../Targets/Delete" asp-route-id="@item.Id" asp-route-salesMovementId="@Model.SalesMovement.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a>
+                                            }
+                                         </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./SalesMovements">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*New Target modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Target</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="Target.SalesMovementId" value="@Model.SalesMovementId" class="form-control" hidden/>
+                        <div class="form-group col-md-4 form-check">
+                            <label class="control-label">For S.S.P</label>
+                            <input type="checkbox" style="width: 40%" id="IsSSP" />
+                        </div>
+                        <div class="form-group col-md-12 forssp">
+                            <label asp-for="Target.TargetCustomerId">M.S.F / Corp</label>
+                            <div class="row">
+                                <select id="ddlTargetCustomers" asp-for="Target.TargetCustomerId" name="Target.TargetCustomerId" asp-items="ViewBag.Customers" class="form-control" style="width: 100%">
+                                    <option value="">--  Select M.S.F / Corp  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Target.TargetCustomerId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Target.CropAndAnimalId">Crop / Animal</label>
+                            <div class="row">
+                                <select id="ddlCropAndAnimals" asp-for="Target.CropAndAnimalId" name="Target.CropAndAnimalId" asp-items="ViewBag.CropAndAnimals" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Crop / Animal  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Target.CropAndAnimalId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Target.ProductId">Product</label>
+                            <div class="row">
+                                <select id="ddlProducts" asp-for="Target.ProductId" name="Target.ProductId" asp-items="ViewBag.Products" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Products  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Target.ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group nonssp">
+                            <label asp-for="Target.CropAndAnimalQuantity" class="control-label">No. Of Animals</label>
+                            <input asp-for="Target.CropAndAnimalQuantity" class="form-control" />
+                            <span asp-validation-for="Target.CropAndAnimalQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Target.Volume" class="control-label">Volume</label>
+                            <input asp-for="Target.Volume" class="form-control" id="marketShare"/>
+                            <span asp-validation-for="Target.Volume" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlCropAndAnimals").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlProducts").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlCropAndAnimals", function () {
+            $("input[name=CropAndAnimalId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlProducts", function () {
+            $("input[name=ProductId]").val($(this).find("option:selected").text());
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlTargetCustomers").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlTargetCustomers", function () {
+            $("input[name=TargetCustomerId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".forssp").hide();
+        });
+        $("body").on("change", "#IsSSP", function () {
+            var IsSSP = $(this).is(":checked");
+            if (IsSSP == true) {
+                $(".forssp").show();
+                $(".nonssp").hide();
+            } else {
+                $(".forssp").hide();
+                $(".nonssp").show();
+                $("#ddlTargetCustomers").val(null).trigger('change');
+            }
+        });
+    </script>

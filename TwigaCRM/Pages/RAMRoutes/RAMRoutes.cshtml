@@ -1,0 +1,84 @@
+﻿@page
+@model TwigaCRM.Pages.RAMRoutes.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].RAMPlan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].Day)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].RouteDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].Zone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].Activity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].ActualLong)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].ActualLat)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].CreateAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMRoutes[0].UpdateAt)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.RAMRoutes) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RAMPlan.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Day)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RouteDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Zone.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Activity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActualLong)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActualLat)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateAt)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

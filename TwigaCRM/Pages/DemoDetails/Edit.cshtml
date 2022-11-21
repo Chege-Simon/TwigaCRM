@@ -1,0 +1,103 @@
+﻿@page
+@model TwigaCRM.Pages.DemoDetails.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Demo</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <form method="post" class="form-row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="DemoDetail.Id" />
+                <input type="hidden" asp-for="DemoDetail.DemoId" />
+                <div class="form-group col-md-12">
+                    <label asp-for="DemoDetail.CropAndAnimalId" class="control-label">Crop / Anima</label>
+                    <input  class="form-control" disabled value="@Model.DemoDetail.CropAndAnimal.Name" />
+                    <input type="hidden" asp-for="DemoDetail.CropAndAnimalId" />
+                    <span asp-validation-for="DemoDetail.CropAndAnimalId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="DemoDetail.PestAndDiseaseId" class="control-label"> Target Pest / Disease</label>
+                    <input  class="form-control" disabled value="@Model.DemoDetail.PestAndDisease.Name" />
+                    <input type="hidden" asp-for="DemoDetail.PestAndDiseaseId" />
+                    <span asp-validation-for="DemoDetail.PestAndDiseaseId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="DemoDetail.ProductId">Product</label>
+                    <input class="form-control" disabled value="@Model.DemoDetail.Product.Name @Model.DemoDetail.Product.PackagingSize @Model.DemoDetail.Product.UnitOfMeasure (@Model.DemoDetail.Product.Code) " />
+                    <input type="hidden" asp-for="DemoDetail.ProductId" />
+                    <span asp-validation-for="DemoDetail.ProductId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="DemoDetail.CompetingProductId">Competing Product</label>
+                    <input class="form-control" disabled value="@Model.DemoDetail.CompetingProduct.ProductName - @Model.DemoDetail.CompetingProduct.CompanyName" />
+                    <input type="hidden" asp-for="DemoDetail.CompetingProductId" />
+                    <span asp-validation-for="DemoDetail.CompetingProductId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="DemoDetail.SiteId">Site</label>
+                    <input class="form-control" disabled value="@Model.DemoDetail.Site.SiteName" />
+                    <input type="hidden" asp-for="DemoDetail.SiteId" />
+                    <span asp-validation-for="DemoDetail.SiteId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="DemoDetail.RequestedQuantityOfSample" class="control-label">Suggested Land in Ha. / No. Of Animals</label>
+                    <input value="@Model.DemoDetail.RequestedQuantityOfSample" class="form-control" disabled />
+                    <span asp-validation-for="DemoDetail.RequestedQuantityOfSample" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="DemoDetail.ApprovedQuantityOfSample" class="control-label">Approved Land in Ha. / No. Of Animals</label>
+                    <input asp-for="DemoDetail.ApprovedQuantityOfSample" class="form-control" />
+                    <span asp-validation-for="DemoDetail.ApprovedQuantityOfSample" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="DemoDetail.RequestedNumberOfDemos" class="control-label">Suggested No. Times Applied</label>
+                    <input value="@Model.DemoDetail.RequestedNumberOfDemos" class="form-control" disabled />
+                    <span asp-validation-for="DemoDetail.RequestedNumberOfDemos" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="DemoDetail.ApprovedNumberOfDemos" class="control-label">Approved No. Times Applied</label>
+                    <input asp-for="DemoDetail.ApprovedNumberOfDemos" class="form-control"  />
+                    <span asp-validation-for="DemoDetail.ApprovedNumberOfDemos" class="text-danger"></span>
+                </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./DemoDetails" asp-route-id="DemoDetail.DemoId">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

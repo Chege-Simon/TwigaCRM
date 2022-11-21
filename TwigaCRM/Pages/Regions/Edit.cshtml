@@ -1,0 +1,41 @@
+﻿@page
+@model TwigaCRM.Pages.Regions.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Region</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Region.Id" />
+                <div class="form-group">
+                    <label asp-for="Region.Name" class="control-label"></label>
+                    <input asp-for="Region.Name" class="form-control" />
+                    <span asp-validation-for="Region.Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+<div>
+    <a asp-page="./Regions">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,69 @@
+﻿@page
+@model TwigaCRM.Pages.RAMFieldReports.EditModel
+
+@{
+    ViewData["Title"] = "Edit R.A.M Field Report";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit R.A.M Field Report</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="RAMFieldReport.Id" />
+            <input type="hidden" asp-for="RAMFieldReport.RAMId" />
+            <div class="form-group">
+                <label asp-for="RAMFieldReport.RecordDate" class="control-label"></label>
+                <input asp-for="RAMFieldReport.RecordDate" class="form-control" />
+                <span asp-validation-for="RAMFieldReport.RecordDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RAMFieldReport.CustomerRelatedIssues" class="control-label"></label>
+                <input asp-for="RAMFieldReport.CustomerRelatedIssues" class="form-control" />
+                <span asp-validation-for="RAMFieldReport.CustomerRelatedIssues" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RAMFieldReport.WeatherAndCropSituationUpdate" class="control-label"></label>
+                <input asp-for="RAMFieldReport.WeatherAndCropSituationUpdate" class="form-control" />
+                <span asp-validation-for="RAMFieldReport.WeatherAndCropSituationUpdate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RAMFieldReport.ProductRelatedIssues" class="control-label"></label>
+                <input asp-for="RAMFieldReport.ProductRelatedIssues" class="form-control" />
+                <span asp-validation-for="RAMFieldReport.ProductRelatedIssues" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RAMFieldReport.Opportunities" class="control-label"></label>
+                <input asp-for="RAMFieldReport.Opportunities" class="form-control" />
+                <span asp-validation-for="RAMFieldReport.Opportunities" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RAMFieldReport.OtherRemarks" class="control-label"></label>
+                <input asp-for="RAMFieldReport.OtherRemarks" class="form-control" />
+                <span asp-validation-for="RAMFieldReport.OtherRemarks" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+<div>
+    <a asp-page="./RAMFieldReports">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

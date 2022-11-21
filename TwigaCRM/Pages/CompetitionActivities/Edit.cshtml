@@ -1,0 +1,109 @@
+﻿@page
+@model TwigaCRM.Pages.CompetitionActivities.EditModel
+
+@{
+    ViewData["Title"] = "Edit Competetition Activity";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Competetition Activity</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CompetitionActivity.Id" />
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.AppUserId" class="control-label"></label>
+                <input value="CompetitionActivity.AppUser.Email" class="form-control" disabled/>
+                <input asp-for="CompetitionActivity.AppUserId" class="form-control" hidden />
+                <span asp-validation-for="CompetitionActivity.AppUserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.Company" class="control-label"></label>
+                <input asp-for="CompetitionActivity.Company" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.Company" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.NewProduct" class="control-label"></label>
+                <input asp-for="CompetitionActivity.NewProduct" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.NewProduct" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.NewPack" class="control-label"></label>
+                <input asp-for="CompetitionActivity.NewPack" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.NewPack" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.PriceChanges" class="control-label"></label>
+                <input asp-for="CompetitionActivity.PriceChanges" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.PriceChanges" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.ChangeInDeployment" class="control-label"></label>
+                <input asp-for="CompetitionActivity.ChangeInDeployment" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.ChangeInDeployment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.Launches" class="control-label"></label>
+                <input asp-for="CompetitionActivity.Launches" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.Launches" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.TrainingFarmers" class="control-label"></label>
+                <input asp-for="CompetitionActivity.TrainingFarmers" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.TrainingFarmers" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.TrainingStockists" class="control-label"></label>
+                <input asp-for="CompetitionActivity.TrainingStockists" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.TrainingStockists" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.Offers" class="control-label"></label>
+                <input asp-for="CompetitionActivity.Offers" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.Offers" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.MediaPresence" class="control-label"></label>
+                <input asp-for="CompetitionActivity.MediaPresence" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.MediaPresence" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.StockOuts" class="control-label"></label>
+                <input asp-for="CompetitionActivity.StockOuts" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.StockOuts" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.RebatsAndSchemes" class="control-label"></label>
+                <input asp-for="CompetitionActivity.RebatsAndSchemes" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.RebatsAndSchemes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompetitionActivity.MajorPurchaseFromCompetition" class="control-label"></label>
+                <input asp-for="CompetitionActivity.MajorPurchaseFromCompetition" class="form-control" />
+                <span asp-validation-for="CompetitionActivity.MajorPurchaseFromCompetition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+            </div>
+            <div class="col-md-3"></div>
+    </div>
+    </div>
+<div    >
+        <a asp-page="./CompetitionActivities">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

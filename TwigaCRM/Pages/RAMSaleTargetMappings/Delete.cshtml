@@ -1,0 +1,52 @@
+﻿@page
+@model TwigaCRM.Pages.RAMSaleTargetMappings.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>RAMSaleTargetMapping</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RAMSaleTargetMapping.MainDistributor)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RAMSaleTargetMapping.MainDistributor.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RAMSaleTargetMapping.ExpectedAmount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RAMSaleTargetMapping.ExpectedAmount)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RAMSaleTargetMapping.RAMSaleTarget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RAMSaleTargetMapping.RAMSaleTarget.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RAMSaleTargetMapping.CreateAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RAMSaleTargetMapping.CreateAt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RAMSaleTargetMapping.UpdateAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RAMSaleTargetMapping.UpdateAt)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="RAMSaleTargetMapping.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

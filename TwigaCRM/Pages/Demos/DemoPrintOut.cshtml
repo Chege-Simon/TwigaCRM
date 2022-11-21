@@ -1,0 +1,211 @@
+﻿@page
+@model TwigaCRM.Pages.Demos.DemoPrintOutModel
+
+@{
+    ViewData["Title"] = "DemoPrintOut";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid" id="content">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h2">Demo Print Out</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.Demo.SalesPerson.FirstName @Model.Demo.SalesPerson.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Demo.SalesPerson.PhoneNumber
+                        </h6>
+                        <h5 class="col-md-12">
+                            <label>Demo Title:</label>
+                            @Model.Demo.Title
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Demo.Description
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.Demo.SalesPerson.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Demo Type: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Demo.DemoType</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-6 row">
+                    <div class="col-3"></div>
+                    <div class="col-9 row">
+                        <div class="col-md-7">
+                            <label>F.O.A Approval Status: </label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Demo.FOAstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>P.D Approval Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Demo.PDstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>Demo Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Demo.Status</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header row">
+                        <h1 class="card-title col-md-9 font-weight-bolder">Demo Details</h1>
+                        <span class="col-md-3">
+                            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add</a>
+                        </span>
+                    </div>
+                    <table class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.DemoDetails[0].Demo)
+                                </th>
+                                <th>
+                                    Crop / Animal
+                                </th>
+                                <th>
+                                    Target Pest / Disease
+                                </th>
+                                <th>
+                                    Req Land in Ha. / No. Of Animals
+                                </th>
+                                <th>
+                                    Req No. Of Demos
+                                </th>
+                                <th>
+                                    App Land in Ha. / No. Of Animals
+                                </th>
+                                <th>
+                                    App No. Of Demos
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.DemoDetails[0].Product)
+                                </th>
+                                <th>
+                                    Competing Product
+                                </th>
+                                <th>Comment</th>
+                                <th>Requested Volume</th>
+                                <th>Approved Volume</th>
+                                <th>Approval</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.DemoDetails)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Demo.Title)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CropAndAnimal.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PestAndDisease.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RequestedQuantityOfSample)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RequestedNumberOfDemos)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ApprovedQuantityOfSample)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ApprovedNumberOfDemos)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Name)
+                                        @Html.DisplayFor(modelItem => item.Product.PackagingSize)
+                                        @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                        <span>(</span>
+                                        @Html.DisplayFor(modelItem => item.Product.Code)
+                                        <span>)</span>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CompetingProduct.ProductName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Remarks)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RequestedVolumeOfProduct)
+                                        @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ApprovedVolumeOfProduct)
+                                        @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                    </td>
+                                    <td class="text-success">
+                                        @if (item.IsFOAApproved)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                        @if (item.IsPDApproved)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $(".dataTable").DataTable({
+                "paging": false,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+        });
+    </script>
+
+    <script>
+        window.addEventListener("load", window.print());
+    </script>

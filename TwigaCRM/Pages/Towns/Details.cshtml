@@ -1,0 +1,92 @@
+﻿@page
+@model TwigaCRM.Pages.Towns.DetailsModel
+
+@{
+    ViewData["Title"] = "Town Details";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Zones in @Model.Town.Name Town</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Zone</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Town.Zones[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Town.Zones[0].UpdateAt)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Zones) {
+        <tr>
+            <td w-25>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateAt)
+            </td>
+            <td>
+                <a asp-page="../Zones/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+        </table>
+        <div class="col-md-12 row">
+            <div class="col-10">
+            </div>
+            <!-- /.col -->
+            <div class="col-2">
+                <a class="btn btn-secondary" asp-page="../Regions/Details" asp-route-id="@Model.Town.Region.Id">Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Zone modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Zone</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Zone.TownId" class="control-label">Town</label>
+                            <input asp-for="Zone.TownId" class="form-control" value="@Model.Town.Id" hidden/>
+                            <input type="text" class="form-control" value="@Model.Town.Name" disabled/>
+                            <span asp-validation-for="Zone.TownId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Zone.Name" class="control-label"></label>
+                            <input asp-for="Zone.Name" class="form-control" />
+                            <span asp-validation-for="Zone.Name" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

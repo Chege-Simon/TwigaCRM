@@ -1,0 +1,238 @@
+﻿@page
+@model TwigaCRM.Pages.CompetitionActivities.IndexModel
+
+@{
+    ViewData["Title"] = "Competition Activities";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Competition Activities</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Record Activity</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+    <thead>
+        <tr>
+            <th>
+                Recorded By
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].Company)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].NewProduct)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].NewPack)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].PriceChanges)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].ChangeInDeployment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].Launches)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].TrainingFarmers)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].TrainingStockists)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].Offers)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].MediaPresence)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].StockOuts)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].RebatsAndSchemes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].MajorPurchaseFromCompetition)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompetitionActivities[0].UpdateAt)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.CompetitionActivities) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AppUser.FirstName)
+                @Html.DisplayFor(modelItem => item.AppUser.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NewProduct)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NewPack)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PriceChanges)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChangeInDeployment)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Launches)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrainingFarmers)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrainingStockists)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Offers)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MediaPresence)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockOuts)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RebatsAndSchemes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MajorPurchaseFromCompetition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateAt)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+        </table>
+    </div>
+</div>
+@*New Competing Product modal*@
+<div class="modal fade" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Competing Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="CompetitionActivity.AppUserId" value="@Model.AppUser.Id" class="form-control" hidden />
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.Company" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.Company" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.Company" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.NewProduct" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.NewProduct" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.NewProduct" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.NewPack" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.NewPack" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.NewPack" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.PriceChanges" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.PriceChanges" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.PriceChanges" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.ChangeInDeployment" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.ChangeInDeployment" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.ChangeInDeployment" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.Launches" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.Launches" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.Launches" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.TrainingFarmers" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.TrainingFarmers" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.TrainingFarmers" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.TrainingStockists" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.TrainingStockists" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.TrainingStockists" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.Offers" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.Offers" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.Offers" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.MediaPresence" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.MediaPresence" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.MediaPresence" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.StockOuts" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.StockOuts" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.StockOuts" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.RebatsAndSchemes" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.RebatsAndSchemes" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.RebatsAndSchemes" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CompetitionActivity.MajorPurchaseFromCompetition" class="control-label"></label>
+                            <input asp-for="CompetitionActivity.MajorPurchaseFromCompetition" class="form-control" />
+                            <span asp-validation-for="CompetitionActivity.MajorPurchaseFromCompetition" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+

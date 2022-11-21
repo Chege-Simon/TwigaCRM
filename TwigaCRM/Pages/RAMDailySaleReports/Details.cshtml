@@ -1,0 +1,163 @@
+﻿@page
+@model TwigaCRM.Pages.RAMDailySaleReports.DetailsModel
+
+@{
+    ViewData["Title"] = "D.S.R - Details";
+    bool CanApprove = false;
+
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "approve_DSR")
+            {
+                CanApprove = true;
+                break;
+            }
+        }
+    }
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Daily Movement Report Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.RAMDailySaleReport.RAM.FirstName @Model.RAMDailySaleReport.RAM.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.RAMDailySaleReport.RAM.PhoneNumber
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.RAMDailySaleReport.RAM.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Region: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.RAMDailySaleReport.RAM.Town.Region.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Town: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.RAMDailySaleReport.RAM.Town.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-6 row">
+                    <div class="col-3"></div>
+                    <div class="col-9 row">
+                        <div class="col-md-7">
+                            <label>F.O.A Approval Status: </label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.RAMDailySaleReport.ApprovalStatus</p>
+                        </div>
+                    </div>
+                    @if (CanApprove && Model.RAMDailySaleReport.IsSubmitted)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="ApprovalStatus" class="control-label col">DMR Approval Status</label>
+                                <select asp-for="ApprovalStatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="FOAApprove" asp-route-id="@Model.RAMDailySaleReport.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Movement</h3>
+                            <span class="col-md-3">
+                                @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Daily Movement</a>*@
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMDailySales[0].MainDistributor)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMDailySales[0].DailyAmount)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMDailySales[0].UpdateAt)
+                                    </th>
+                                    @* <th>
+                                    Action
+                                    </th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.RAMDailySales)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MainDistributor.SiteName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DailyAmount)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.UpdateAt)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./RAMDailySaleReports">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

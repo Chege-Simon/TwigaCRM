@@ -1,0 +1,158 @@
+﻿@page
+@model TwigaCRM.Pages.Products.DetailsModel
+
+@{
+    ViewData["Title"] = "Product - Details";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Product Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="">
+                        <h5>
+                            @Model.Product.Name @Model.Product.PackagingSize @Model.Product.UnitOfMeasure
+                        </h5>
+                        <h5>
+                            @Model.Product.Description
+                        </h5>
+                        <h6 class="text-primary">
+                            @Model.Product.Code
+                        </h6>
+                        <br /> 
+                        <p class="">Business Line : <span>@Model.Product.BusinessLine.NormalizedName</span></p>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <a asp-page="./Edit" asp-route-id="@Model.Product.Id" class="btn btn-secondary rounded">Edit Product</a>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                     <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Sector</h3>
+                            <span class="col-md-3">
+                                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Assign Competing Product</a>
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CompetingProducts[0].ProductName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CompetingProducts[0].CompanyName)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var productcompetingproduct in Model.Product.ProductCompetingProducts)
+                            {
+                                <tr>
+                                    <td>
+                                        @foreach (var competingproduct in Model.CompetingProducts)
+                                        {
+                                            @if (competingproduct.Id == productcompetingproduct.CompetingProductId)
+                                            {
+                                                @Html.DisplayFor(modelItem => competingproduct.ProductName)
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @foreach (var competingproduct in Model.CompetingProducts)
+                                        {
+                                            @if (competingproduct.Id == productcompetingproduct.CompetingProductId)
+                                            {
+                                                @Html.DisplayFor(modelItem => competingproduct.CompanyName)
+                                            }
+                                        }
+                                    </td>
+                                    <td class="row">
+                                        @*<a asp-page="./Edit" asp-route-id="@productcompetingproduct.Id"data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |*@
+                                            <a asp-page="../ProductCompetingProducts/Delete" asp-route-id="@productcompetingproduct.Id" asp-route-productId="@Model.Product.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./Products">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*Add Competing Product modal*@
+<div class="modal fade" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Competing Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md 12">
+                            <label asp-for="ProductCompetingProduct.ProductId" class="control-label">Product</label>
+                            <input asp-for="ProductCompetingProduct.ProductId" value="@Model.Product.Id" class="form-control" type="hidden"/>
+                            <input Value="@Model.Product.Code" class="form-control" disabled/>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="ProductCompetingProduct.CompetingProductId">Business Line</label>
+                            <div class="row">
+                                <select id="ddlCompetingProducts" asp-for="ProductCompetingProduct.CompetingProductId" name="ProductCompetingProduct.CompetingProductId" asp-items="ViewBag.CompetingProducts" class="form-control" style="wsidth:100%">
+                                    <option value="">--  Select Competing Product  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="ProductCompetingProduct.CompetingProductId" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

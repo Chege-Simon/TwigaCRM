@@ -1,0 +1,120 @@
+﻿@page
+@model TwigaCRM.Pages.DemoProgressReports.IndexModel
+
+@{
+    ViewData["Title"] = "Demo Progress Reports";
+}
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Demo Progress Reports</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add Report</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DemoProgressReports[0].DocumentUrl)
+            </th>
+            <th>
+                Demo Title
+            </th>
+            <th>
+                DemoDetail No.
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DemoProgressReports[0].UpdateAt)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.DemoProgressReports) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DemoDetail.Demo.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DemoDetail.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateAt)
+            </td>
+            <td class="row">
+                <a asp-page="./DemoProgressReports" asp-page-handler="DownloadFile" asp-route-fileName="@item.DocumentUrl" data-toggle="tooltip" data-placement="top" title="Download Report" class="col-5"><i class="fa fa-download" aria-hidden="true"></i></a> <span>|</span>
+                <a asp-page="./Delete" asp-route-id="@item.Id" asp-page-handler="DownloadFile" asp-route-fileName="@item.DocumentUrl" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+        </table>
+    </div>
+    <div style="float:right">
+        <a asp-page="../Demos/Details" asp-route-id="@Model.DemoId">Back to Campaign Details</a>
+    </div>
+</div>
+
+@*New Report Assignment modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div>
+                            <input type="hidden" asp-for="DemoProgressReport.DemoDetailId" />
+                            <input type="hidden" asp-for="DemoId" />
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Upload" class="control-label">Upload File</label>
+                            <input asp-for="Upload" class="form-control" id="UploadId" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="DemoProgressReport.IsFinalReport" class="control-label"></label>
+                            <input asp-for="DemoProgressReport.IsFinalReport" class="form-control" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var file = document.getElementById('UploadId');
+
+    file.onchange = function (e) {
+        var ext = this.value.match(/\.([^\.]+)$/)[1];
+        switch (ext) {
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'pdf':
+                console.log("Correct File Format, Allowed");
+                break;
+            default:
+                alert('Not allowed');
+                this.value = '';
+        }
+    };
+</script>

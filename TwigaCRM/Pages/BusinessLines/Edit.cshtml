@@ -1,0 +1,46 @@
+﻿@page
+@model TwigaCRM.Pages.BusinessLines.EditModel
+
+@{
+    ViewData["Title"] = "Edit Business Line";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Business Line</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="BusinessLine.Id" />
+            <div class="form-group">
+                <label asp-for="BusinessLine.Description" class="control-label"></label>
+                <input asp-for="BusinessLine.Description" class="form-control" />
+                <span asp-validation-for="BusinessLine.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BusinessLine.NormalizedName" class="control-label"></label>
+                <input asp-for="BusinessLine.NormalizedName" class="form-control" />
+                <span asp-validation-for="BusinessLine.NormalizedName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+<div>
+    <a asp-page="./BusinessLines">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

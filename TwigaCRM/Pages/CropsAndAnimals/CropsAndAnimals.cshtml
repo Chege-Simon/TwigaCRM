@@ -1,0 +1,266 @@
+﻿@page
+@model TwigaCRM.Pages.CropsAndAnimals.IndexModel
+
+@{
+    ViewData["Title"] = "CropsAndAnimals";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<nav class="container">
+  <div class="nav nav-tabs row" id="nav-tab" role="tablist">
+    <button class="cool nav-link col-6 font-weight-bold h2 active" id="nav-animal-tab" data-toggle="tab" data-target="#nav-animal" type="button" role="tab" aria-controls="nav-animal" aria-selected="true">Animals</button>
+    <button class="nav-link col-6 font-weight-bold h2" id="nav-crop-tab" data-toggle="tab" data-target="#nav-crop" type="button" role="tab" aria-controls="nav-crop" aria-selected="false">Crops</button>
+    @*<button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>*@
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-animal" role="tabpanel" aria-labelledby="nav-animal-tab">
+      
+    <div class="card">
+        <div class="card-header row">
+            <h3 class="card-title col-md-10">Animals</h3>
+            <span class="col-md-2">
+                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Crop / Animal</a>
+            </span>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-bordered table-striped dataTable">
+        <thead>
+             <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].Type)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].Sector)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].CreateAt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].UpdateAt)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cropandanimal in Model.CropAndAnimals) {
+                @if (cropandanimal.Type == "Animal")
+                    {
+                         <tr>
+                           <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.Type)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.Sector.NormalizedName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.CreateAt)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.UpdateAt)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@cropandanimal.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@cropandanimal.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+    </table>
+    </div>
+</div>
+  </div>
+  <div class="tab-pane fade" id="nav-crop" role="tabpanel" aria-labelledby="nav-crop-tab">
+      
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Crops</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Crop / Animal</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable">
+    <thead>
+             <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].Type)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].Sector)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].CreateAt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CropAndAnimals[0].UpdateAt)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cropandanimal in Model.CropAndAnimals) {
+                @if (cropandanimal.Type == "Crop")
+                    {
+                         <tr>
+                           <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.Type)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.Sector.NormalizedName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.CreateAt)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cropandanimal.UpdateAt)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@cropandanimal.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@cropandanimal.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+</table>
+    </div>
+</div>
+  </div>
+  @*<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>*@
+</div>
+
+@*New CropAndAnimal modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Crop / Animal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="CropAndAnimal.Name" class="control-label"></label>
+                            <input asp-for="CropAndAnimal.Name" class="form-control" />
+                            <span asp-validation-for="CropAndAnimal.Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="CropAndAnimal.Type" class="control-label"></label>
+                            <select asp-for="CropAndAnimal.Type" class="form-control">
+                                <option value="">-- Select Type --</option>
+                                <option value="Animal">Animal</option>
+                                <option value="Crop">Crop</option>
+                            </select>
+                            <span asp-validation-for="CropAndAnimal.Type" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="CropAndAnimal.SectorId" class="control-label">Sector</label>
+                             <div class="row">
+                                <select id="ddlSectors" asp-for="CropAndAnimal.SectorId" name="CropAndAnimal.SectorId" asp-items="ViewBag.Sectors" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Sector  --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script type="text/javascript">
+    $(document).ready(function() {
+      $("#ddlSectors").select2({
+              dropdownParent: $("#InputModal")
+      });
+});
+</script>
+<script>
+    $(document).ready(function() {
+        $('button[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            changeSelect()
+        })
+
+        // Select2
+        function changeSelect() {
+            $("#ddlSectors").select2({
+                tags: true,
+                dropdownParent: $("#InputModal")
+            })
+        }
+    });
+</script>
+<script type="text/javascript">
+    //$(function () {
+    //    $("#ddlSectors").select2();
+    //});
+    $("body").on("change", "#ddlSectors", function () {
+        $("input[name=SectorId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $(".dataTable").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false, "orderCellsTop" : true,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+});
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+	$('button[data-toggle="tab"]').on('show.bs.tab', function(e) {
+		localStorage.setItem('activeTab', $(e.target).attr('id'));
+	});
+	var activeTab = localStorage.getItem('activeTab');
+	if(activeTab){
+		$('#nav-tab #' + activeTab).tab('show');
+	}
+});
+</script>

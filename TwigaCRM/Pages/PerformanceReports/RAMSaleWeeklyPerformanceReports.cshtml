@@ -1,0 +1,286 @@
+﻿@page
+@model TwigaCRM.Pages.PerformanceReports.RAMSaleWeeklyPerformanceReportModel
+
+@{
+
+    if (Model.RAMSaleTargetMappings.Count() >= 1)
+    {
+        ViewData["Title"] = @Model.RAMSaleTargetMappings[0].RAMSaleTarget.RAM.FirstName + " " + @Model.RAMSaleTargetMappings[0].RAMSaleTarget.RAM.LastName + " - Weekly Performance";
+    }
+    else
+    {
+        ViewData["Title"] = "NO Data";
+    }
+    decimal TargetAmount;
+    decimal ActualAmount;
+
+    System.Globalization.CultureInfo cult_info = System.Globalization.CultureInfo.CreateSpecificCulture("no");
+
+    System.Globalization.Calendar cal = cult_info.Calendar;
+    //DateTime newDate = @Model.RAMSaleTargetMappings[0].UpdateAt;
+    string year = "";
+    string month = "";
+    if (Model.RAMSaleTargetMappings.Count() >= 1)
+    {
+        year = @Model.RAMSaleTargetMappings[0].CreateAt.Year.ToString();
+        if (@Model.RAMSaleTargetMappings[0].RAMSaleTarget.Month > 9)
+        {
+            month = @Model.RAMSaleTargetMappings[0].RAMSaleTarget.Month.ToString();
+        }
+        else
+        {
+            month = "0" + @Model.RAMSaleTargetMappings[0].RAMSaleTarget.Month.ToString();
+        }
+    }else{
+        year = DateTime.Now.Year.ToString();
+        month = "01";
+    }
+    string datestring = "01" + month + year;
+    DateTime newDate = DateTime.ParseExact(datestring, "ddMMyyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+
+    int Week = cal.GetWeekOfYear(newDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek);
+    int Weektwo = Week + 1;
+    int Weekthree = Week + 2;
+    int Weekfour = Week + 3;
+    int Weekfive = Week + 4;
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center row">
+            <p class="h2 col-md-12">RAM Sales Week Performance Report</p>
+            @*<a asp-page="./DemoPrintOut" asp-route-id="@Model.Demo.Id" class="btn btn-success col-md-2">Generate Print Out</a>*@
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <form class="form-row" method="post">
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.RAMId">R.A.M</label>
+                            <div class="row">
+                                <select id="ddlRAMs" asp-for="Input.RAMId" name="Input.RAMId" asp-items="ViewBag.RAMs" class="form-control" style="width: 100%">
+                                    <option value="">--  Select RAMs  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.RAMId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.Month" class="control-label"></label>
+                            <select asp-for="Input.Month" class="form-control">
+                                <option value="">-- Select Month --</option>
+                                <option value="1">JAN</option>
+                                <option value="2">FEB</option>
+                                <option value="3">MAR</option>
+                                <option value="4">APR</option>
+                                <option value="5">MAY</option>
+                                <option value="6">JUN</option>
+                                <option value="7">JUL</option>
+                                <option value="8">AUG</option>
+                                <option value="9">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select>
+                            <span asp-validation-for="Input.Month" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.FinancialYearId">Financial Year</label>
+                            <div class="row">
+                                <select id="ddlFinancialYears" asp-for="Input.FinancialYearId" name="Input.FinancialYearId" asp-items="ViewBag.FinancialYears" class="form-control" style="width: 100%">
+                                    <option value="">--  Select FinancialYears  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.FinancialYearId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <button type="submit" asp-page="./RAMSalePerformanceReports" asp-page-handler="WeeklyPerformance" class="btn btn-primary mb-2">Generate Report</button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            
+                            @if (Model.RAMSaleTargetMappings.Count() >= 1)
+                            {
+                                <h3 class="card-title col-md-9">@Model.RAMSaleTargetMappings[0].RAMSaleTarget.RAM.FirstName @Model.RAMSaleTargetMappings[0].RAMSaleTarget.RAM.LastName Weekly Performance</h3>
+                            }
+                            else
+                            {
+                                <h3 class="card-title col-md-9">No Data</h3>
+                            }
+                            <span class="col-md-3">
+
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped " id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Main Distributor
+                                    </th>
+                                    <th>
+                                        Monthly Target Amount
+                                    </th>
+                                    <th>
+                                        Monthly Actual Amount
+                                    </th>
+                                    <th>
+                                        Actual Amount Week 1
+                                    </th>
+                                    <th>
+                                        Actual Amount Week 2
+                                    </th>
+                                    <th>
+                                        Actual Amount Week 3
+                                    </th>
+                                    <th>
+                                        Actual Amount Week 4
+                                    </th>
+                                    <th>
+                                        Actual Amount Week 5
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var target in Model.RAMSaleTargetMappings)
+                                {
+                                    TargetAmount = target.ExpectedAmount;
+                                    ActualAmount = 0;
+                                    foreach (var dm in Model.RAMDailySales)
+                                    {
+                                        if (target.MainDistributor == dm.MainDistributor)
+                                        {
+                                            ActualAmount += dm.DailyAmount;
+                                        }
+                                    }
+
+                                    decimal ActualAmountWeek1 = 0;
+                                    decimal ActualAmountWeek2 = 0;
+                                    decimal ActualAmountWeek3 = 0;
+                                    decimal ActualAmountWeek4 = 0;
+                                    decimal ActualAmountWeek5 = 0;
+                                    foreach (var dm in Model.RAMDailySales)
+                                    {
+                                        if (target.MainDistributor == dm.MainDistributor && cal.GetWeekOfYear(dm.RAMDailySaleReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Week)
+                                        {
+                                            ActualAmountWeek1 += dm.DailyAmount;
+                                        }
+                                    }
+                                    foreach (var dm in Model.RAMDailySales)
+                                    {
+                                        if (target.MainDistributor == dm.MainDistributor && cal.GetWeekOfYear(dm.RAMDailySaleReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Weektwo)
+                                        {
+                                            ActualAmountWeek2 += dm.DailyAmount;
+                                        }
+                                    }
+                                    foreach (var dm in Model.RAMDailySales)
+                                    {
+                                        if (target.MainDistributor == dm.MainDistributor && cal.GetWeekOfYear(dm.RAMDailySaleReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Weekthree)
+                                        {
+                                            ActualAmountWeek3 += dm.DailyAmount;
+                                        }
+                                    }
+                                    foreach (var dm in Model.RAMDailySales)
+                                    {
+                                        if (target.MainDistributor == dm.MainDistributor && cal.GetWeekOfYear(dm.RAMDailySaleReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Weekfour)
+                                        {
+                                            ActualAmountWeek4 += dm.DailyAmount;
+                                        }
+                                    }
+                                    foreach (var dm in Model.RAMDailySales)
+                                    {
+                                        if (target.MainDistributor == dm.MainDistributor && cal.GetWeekOfYear(dm.RAMDailySaleReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Weekfive)
+                                        {
+                                            ActualAmountWeek5 += dm.DailyAmount;
+                                        }
+                                    }
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => target.MainDistributor.SiteName)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}",@TargetAmount)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}",@ActualAmount)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualAmountWeek1)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualAmountWeek2)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualAmountWeek3)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualAmountWeek4)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualAmountWeek5)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./RAMSalePerformanceReports">Back</a>
+                    </div>
+                </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlFinancialYears").select2();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlRAMs").select2();
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlFinancialYears", function () {
+            $("input[name=FinancialYearId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlRAMs", function () {
+            $("input[name=RAMId]").val($(this).find("option:selected").text());
+        });
+    </script>

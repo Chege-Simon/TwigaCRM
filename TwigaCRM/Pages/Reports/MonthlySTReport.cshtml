@@ -1,0 +1,249 @@
+﻿@page
+@model TwigaCRM.Pages.Reports.MonthlySTReportModel
+
+@{
+    ViewData["Title"] = "M.T Report";
+    string Month = "";
+    switch (Model.Month)
+    {
+        case 1:
+            Month = "JANUARY";
+            break;
+        case 2:
+            Month = "FEBUARY";
+            break;
+        case 3:
+            Month = "MARCH";
+            break;
+        case 4:
+            Month = "APRIL";
+            break;
+        case 5:
+            Month = "MAY";
+            break;
+        case 6:
+            Month = "JUNE";
+            break;
+        case 7:
+            Month = "JULY";
+            break;
+        case 8:
+            Month = "AUGUST";
+            break;
+        case 9:
+            Month = "SEPTEMBER";
+            break;
+        case 10:
+            Month = "OCTOBER";
+            break;
+        case 11:
+            Month = "NOVEMBER";
+            break;
+        case 12:
+            Month = "DECEMBER";
+            break;
+        default:
+            break;
+    }
+
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center row">
+            <p class="h2 col-md-12">Movement Target Report</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <form class="form-row" method="post">
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.Month" class="control-label"></label>
+                            <select asp-for="Input.Month" class="form-control">
+                                <option value="">-- Select Month --</option>
+                                <option value="1">JAN</option>
+                                <option value="2">FEB</option>
+                                <option value="3">MAR</option>
+                                <option value="4">APR</option>
+                                <option value="5">MAY</option>
+                                <option value="6">JUN</option>
+                                <option value="7">JUL</option>
+                                <option value="8">AUG</option>
+                                <option value="9">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select>
+                            <span asp-validation-for="Input.Month" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.FinancialYearId">Financial Year</label>
+                            <div class="row">
+                                <select id="ddlFinancialYears" asp-for="Input.FinancialYearId" name="Input.FinancialYearId" asp-items="ViewBag.FinancialYears" class="form-control" style="width: 100%">
+                                    <option value="">--  Select FinancialYears  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.FinancialYearId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <button type="submit" asp-page="./STReports" class="btn btn-primary mb-2">Generate Report</button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+                <br />
+                <hr />
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            @if (Model.Targets.Count() >= 1)
+                            {
+                                <h3 class="card-title col-md-9">Approved S.M.T Report (@Month) @Model.Targets[0].SalesMovement.FinancialYear.StartDate.Year - @Model.Targets[0].SalesMovement.FinancialYear.EndDate.Year</h3>
+                            }
+                            else
+                            {
+                                <h3 class="card-title col-md-9">No Data</h3>
+                            }
+                            <span class="col-md-3">
+
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Sales Person
+                                    </th>
+                                    <th>
+                                        Crop Or Animal
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].Product)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].Product.Description)
+                                    </th>
+                                    <th>
+                                        Hectares / Count
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].Volume)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].BusinessPotential)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].Value)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].MarketShare) (%)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Targets[0].UpdateAt)
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Targets)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.SalesMovement.SalesPerson.FirstName)
+                                            @Html.DisplayFor(modelItem => item.SalesMovement.SalesPerson.LastName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CropAndAnimal.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Product.Name)
+                                            <span> (</span>
+                                            @Html.DisplayFor(modelItem => item.Product.Code)
+                                            <span>)</span>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Product.Description)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CropAndAnimalQuantity)
+                                            @if (item.CropAndAnimal.Type == "Animal")
+                                            {
+                                                @item.CropAndAnimal.Name
+
+                                                <span>(s)</span>
+                                            }
+                                            else if (item.CropAndAnimal.Type == "Crop")
+                                            {
+                                                <span>Ha.</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @* @Html.DisplayFor(modelItem => item.Volume)*@
+                                            @String.Format("{0:#,##0.00}", item.Volume)
+                                            @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                        </td>
+                                        <td>
+                                            @*@Html.DisplayFor(modelItem => item.BusinessPotential)*@
+                                            @String.Format("{0:#,##0.00}", item.BusinessPotential)
+                                            @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                        </td>
+                                        <td>
+                                            @*@Html.DisplayFor(modelItem => item.Value)*@
+                                            KSh @String.Format("{0:#,##0.00}", item.Value)
+                                        </td>
+                                        <td>
+                                            @*@Html.DisplayFor(modelItem => item.MarketShare)*@
+                                            @String.Format("{0:#,##0.00}", item.MarketShare) %
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.UpdateAt)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./STReports">Back</a>
+                    </div>
+                </div>
+                  </div>
+            </div>
+        </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlFinancialYears").select2();
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlFinancialYears", function () {
+            $("input[name=FinancialYearId]").val($(this).find("option:selected").text());
+        });
+    </script>

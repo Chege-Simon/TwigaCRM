@@ -1,0 +1,88 @@
+﻿@page
+@model TwigaCRM.Pages.DemoProductRequisition.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Demo</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form method="post" class="form-row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="DemoProductRequisition.Id" />
+                <input asp-for="DemoProductRequisition.DemoId" type="hidden" />
+                <input asp-for="DemoProductRequisition.InvoiceUrl" type="hidden" />
+            <div class="form-group col-md-12">
+                <label asp-for="DemoProductRequisition.StockistId">Stockist</label>
+                <div class="row">
+                    <select id="ddlStockists" asp-for="DemoProductRequisition.StockistId" name="DemoProductRequisition.StockistId" asp-items="ViewBag.Stockists" class="form-control" style="width: 100%">
+                        <option value="">--  Select Stockist  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="DemoProductRequisition.StockistId" class="text-danger"></span>
+            </div>>
+            <div class="form-group col-md-12">
+                <label asp-for="DemoProductRequisition.ProductId">Product</label>
+                <div class="row">
+                    <select id="ddlProducts" asp-for="DemoProductRequisition.ProductId" name="DemoProductRequisition.ProductId" asp-items="ViewBag.DemoProducts" class="form-control" style="width: 100%">
+                        <option value="">--  Select Product  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="DemoProductRequisition.ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="DemoProductRequisition.Quanitity" class="control-label"></label>
+                <input asp-for="DemoProductRequisition.Quanitity" class="form-control" />
+                <span asp-validation-for="DemoProductRequisition.Quanitity" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="DemoProductRequisition.TotalPrice" class="control-label"></label>
+                <input asp-for="DemoProductRequisition.TotalPrice" class="form-control" />
+                <span asp-validation-for="DemoProductRequisition.TotalPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="Upload" class="control-label">Upload File</label>
+                <input asp-for="Upload" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="../Demos/Details" asp-route-id="DemoProductRequisition.DemoId">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

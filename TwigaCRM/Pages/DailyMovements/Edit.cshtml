@@ -1,0 +1,116 @@
+﻿@page
+@model DailyMovements.EditModel
+
+@{
+    ViewData["Title"] = "Edit Daily Movement";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Daily Movement</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="DailyMovement.Id" />
+                <input type="hidden" asp-for="DailyMovement.DailyMovementReportId" />
+            <div class="form-group col-md-12">
+                <label asp-for="DailyMovement.ProductId">Product</label>
+                <div class="row">
+                    <select id="ddlProducts" asp-for="DailyMovement.ProductId" name="DailyMovement.ProductId" asp-items="ViewBag.Products" class="form-control" style="width: 100%">
+                        <option value="">--  Select Products  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="DailyMovement.ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DailyMovement.Quantity" class="control-label"></label>
+                <input asp-for="DailyMovement.Quantity" class="form-control" />
+                <span asp-validation-for="DailyMovement.Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="DailyMovement.MainDistributorId">Main Distributor</label>
+                <div class="row">
+                    <select id="ddlDistributors" asp-for="DailyMovement.MainDistributorId" name="DailyMovement.MainDistributorId" asp-items="ViewBag.MainDistributors" class="form-control" style="width: 100%">
+                        <option value="">--  Select Main Distributor  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="DailyMovement.MainDistributorId" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="DailyMovement.StockistOrFarmerId">Stockist / Farmer</label>
+                <div class="row">
+                    <select id="ddlReceivingCustomers" asp-for="DailyMovement.StockistOrFarmerId" name="DailyMovement.StockistOrFarmerId" asp-items="ViewBag.StokistOrFarmers" class="form-control" style="width: 100%">
+                        <option value="">--  Select Stockist / Farmer  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="DailyMovement.StockistOrFarmerId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./DailyMovements">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlDistributors").select2();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlProducts").select2();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlReceivingCustomers").select2();
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlDistributors", function () {
+            $("input[name=MainDistributorId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlProducts", function () {
+            $("input[name=ProductId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlReceivingCustomers", function () {
+            $("input[name=StockistOrFarmerId]").val($(this).find("option:selected").text());
+        });
+    </script>

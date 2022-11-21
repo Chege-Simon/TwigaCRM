@@ -1,0 +1,272 @@
+﻿@page
+@model TwigaCRM.Pages.DailyMovementReports.DetailsModel
+
+@{
+    ViewData["Title"] = "D.M.R - Details";
+    bool CanFOAApprove = false;
+    bool CanHRMApprove = false;
+
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "foa_approve_DMR")
+            {
+                CanFOAApprove = true;
+                break;
+            }
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "tl_approve_DMR")
+            {
+                CanHRMApprove = true;
+                break;
+            }
+        }
+    }
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Daily Movement Report Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.DailyMovementReport.SalesPerson.FirstName @Model.DailyMovementReport.SalesPerson.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.DailyMovementReport.SalesPerson.PhoneNumber
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.DailyMovementReport.SalesPerson.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Region: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.DailyMovementReport.SalesPerson.Town.Region.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Town: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.DailyMovementReport.SalesPerson.Town.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-6 row">
+                    <div class="col-3"></div>
+                    <div class="col-9 row">
+                        <div class="col-md-7">
+                            <label>F.O.A Approval Status: </label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.DailyMovementReport.FOAstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>T.L Approval Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.DailyMovementReport.TLstatus</p>
+                        </div>
+                    </div>
+                    @if (CanFOAApprove && Model.DailyMovementReport.IsSubmitted)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="FOAstatus" class="control-label col">DMR Approval Status</label>
+                                <select asp-for="FOAstatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="FOAApprove" asp-route-id="@Model.DailyMovementReport.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                    @if (CanHRMApprove && Model.DailyMovementReport.IsSubmitted && Model.DailyMovementReport.FOAstatus == "Approved")
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="TLstatus" class="control-label">DMR Approval Status</label>
+                                <select asp-for="TLstatus" class="form-control">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="HRMApprove" asp-route-id="@Model.DailyMovementReport.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Movement</h3>
+                            <span class="col-md-3">
+                                @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Daily Movement</a>*@
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DailyMovements[0].Product)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DailyMovements[0].Product.Description)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DailyMovements[0].Quantity)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DailyMovements[0].TotalAmount)
+                                    </th>
+                                    <th>
+                                        Stockist / Farmer
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DailyMovements[0].MainDistributor)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DailyMovements[0].UpdateAt)
+                                    </th>
+                                   @* <th>
+                                        Action
+                                    </th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.DailyMovements)
+                                {
+                                        <tr>
+                                            <td>
+                                            @Html.DisplayFor(modelItem => item.Product.Name)
+                                                <span> (</span>
+                                            @Html.DisplayFor(modelItem => item.Product.Code)
+                                                <span>)</span>
+                                            </td>
+                                            <td>
+                                            @Html.DisplayFor(modelItem => item.Product.Description)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Quantity)
+                                        </td>
+                                            <td>
+                                            @Html.DisplayFor(modelItem => item.TotalAmount)
+                                        </td>
+                                        <td>
+                                            @foreach (var customer in Model.Customers)
+                                            {
+                                                if (customer.Id == item.StockistOrFarmerId)
+                                                {
+                                                    <span>@customer.SiteName</span>
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MainDistributor.SiteName)
+                                        </td>
+                                        <td>
+                                        @Html.DisplayFor(modelItem => item.UpdateAt)
+                                        </td>
+                                        @* <td class="row">
+                                        @if (Model.DailyMovementReport.IsSubmitted)
+                                        {
+                                                    <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a>
+                                        }
+                                        else
+                                        {
+                                                    <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                        }
+                                            </td>*@
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./DailyMovementReports">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+        <script>
+            $(document).ready(function () {
+                $("#ddlDistributors").select2({
+                    dropdownParent: $("#InputModal")
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $("#ddlProducts").select2({
+                    dropdownParent: $("#InputModal")
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $("#ddlReceivingCustomers").select2({
+                    dropdownParent: $("#InputModal")
+                });
+            });
+        </script>
+        <script type="text/javascript">
+            $("body").on("change", "#ddlDistributors", function () {
+                $("input[name=MainDistributorId]").val($(this).find("option:selected").text());
+            });
+        </script>
+        <script type="text/javascript">
+            $("body").on("change", "#ddlProducts", function () {
+                $("input[name=ProductId]").val($(this).find("option:selected").text());
+            });
+        </script>
+        <script type="text/javascript">
+            $("body").on("change", "#ddlReceivingCustomers", function () {
+                $("input[name=StockistOrFarmerId]").val($(this).find("option:selected").text());
+            });
+        </script>

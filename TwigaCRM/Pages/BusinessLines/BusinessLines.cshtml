@@ -1,0 +1,224 @@
+﻿@page
+@model TwigaCRM.Pages.BusinessLines.IndexModel
+
+@{
+    ViewData["Title"] = "Business Line";
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<nav class="container">
+  <div class="nav nav-tabs row" id="nav-tab" role="tablist">
+    <button class="cool nav-link col-6 font-weight-bold h2 active" id="nav-buinessline-tab" data-toggle="tab" data-target="#nav-buinessline" type="button" role="tab" aria-controls="nav-buinessline" aria-selected="true">Business Lines</button>
+    <button class="nav-link col-6 font-weight-bold h2" id="nav-sector-tab" data-toggle="tab" data-target="#nav-sector" type="button" role="tab" aria-controls="nav-sector" aria-selected="false">Sectors</button>
+    @*<button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>*@
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-buinessline" role="tabpanel" aria-labelledby="nav-businessline-tab">
+      
+    <div class="card">
+        <div class="card-header row">
+            <h3 class="card-title col-md-10">Business Lines</h3>
+            <span class="col-md-2">
+                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#NewBusinessLineModal">New Business Line</a>
+            </span>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-bordered table-striped dataTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.BusinessLines[0].Description)
+                </th>
+                <th>
+                    Normalized Name
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BusinessLines[0].CreateAt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BusinessLines[0].UpdateAt)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model.BusinessLines) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NormalizedName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateAt)
+                </td>
+                <td> 
+                     <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+    </div>
+</div>
+  </div>
+  <div class="tab-pane fade" id="nav-sector" role="tabpanel" aria-labelledby="nav-sector-tab">
+      
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Sectors</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#NewSectorModal">New Sector</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Sectors[0].Description)
+            </th>
+            <th>
+                Normalized Name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sectors[0].CreateAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sectors[0].UpdateAt)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Sectors) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NormalizedName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateAt)
+            </td>
+            <td>
+                <a asp-page="../Sectors/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+    </div>
+</div>
+  </div>
+  @*<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>*@
+</div>
+
+@*New Business Line modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="NewBusinessLineModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Business Line</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="BusinessLine.Description" class="control-label"></label>
+                            <input asp-for="BusinessLine.Description" class="form-control" />
+                            <span asp-validation-for="BusinessLine.Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="BusinessLine.NormalizedName" class="control-label"></label>
+                            <input asp-for="BusinessLine.NormalizedName" class="form-control" />
+                            <span asp-validation-for="BusinessLine.NormalizedName" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AddBusinessLine" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Sector modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="NewSectorModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Sector</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Sector.Description" class="control-label"></label>
+                            <input asp-for="Sector.Description" class="form-control" />
+                            <span asp-validation-for="Sector.Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Sector.NormalizedName" class="control-label"></label>
+                            <input asp-for="Sector.NormalizedName" class="form-control" />
+                            <span asp-validation-for="Sector.NormalizedName" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AddSector" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script>
+    $(document).ready(function(){
+        $(".dataTable").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false, "orderCellsTop" : true,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+});
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+	$('button[data-toggle="tab"]').on('show.bs.tab', function(e) {
+		localStorage.setItem('activeTab', $(e.target).attr('id'));
+	});
+	var activeTab = localStorage.getItem('activeTab');
+	if(activeTab){
+		$('#nav-tab #' + activeTab).tab('show');
+	}
+});
+</script>

@@ -1,0 +1,4 @@
+﻿.nav-item .nav-link > .active > a, .nav-item .nav-link > .active > a:hover, .nav-item .nav-link > .active > a:focus {
+    color: #FF0000; /* <----- change your color here*/
+    background-color: transparent;
+}

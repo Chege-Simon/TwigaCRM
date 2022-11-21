@@ -1,0 +1,186 @@
+﻿@page
+@model TwigaCRM.Pages.RAMFieldReports.IndexModel
+
+@{
+    ViewData["Title"] = "R.A.M Field Reports";
+    var AllRAMFieldReports = @Model.RAMFieldReports;
+    var DisplayableRAMFieldReports = @Model.RAMFieldReports;
+    bool CanViewAllRAMFieldReports = false;
+    foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "view_all_field_reports_list")
+            {
+                CanViewAllRAMFieldReports = true;
+                break;
+            }
+        }
+    }
+    if (CanViewAllRAMFieldReports)
+    {
+        DisplayableRAMFieldReports = AllRAMFieldReports;
+    }
+    else
+    {
+        DisplayableRAMFieldReports = AllRAMFieldReports.Where(d => d.RAMId == Model.AppUser.Id).ToList();
+    }
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">R.A.M Field Reports</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" data-toggle="modal" data-target="#InputModal">Record Field Report</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMFieldReports[0].RAM)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMFieldReports[0].RecordDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMFieldReports[0].CustomerRelatedIssues)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMFieldReports[0].WeatherAndCropSituationUpdate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMFieldReports[0].ProductRelatedIssues)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMFieldReports[0].Opportunities)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMFieldReports[0].OtherRemarks)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAMFieldReports[0].UpdateAt)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.RAMFieldReports) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RAM.FirstName)
+                    @Html.DisplayFor(modelItem => item.RAM.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RecordDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerRelatedIssues)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.WeatherAndCropSituationUpdate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductRelatedIssues)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Opportunities)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OtherRemarks)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateAt)
+                </td>
+                <td class="row">
+                        <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+@*New Route modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Field Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="RAMFieldReport.RAMId" class="control-label"></label>
+                            <input value="@Model.AppUser.FirstName @Model.AppUser.LastName" class="form-control" disabled />
+                            <input asp-for="RAMFieldReport.RAMId" value="@Model.AppUser.Id" class="form-control" hidden />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RAMFieldReport.RecordDate" class="control-label"></label>
+                            <input asp-for="RAMFieldReport.RecordDate" class="form-control" />
+                            <span asp-validation-for="RAMFieldReport.RecordDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RAMFieldReport.CustomerRelatedIssues" class="control-label"></label>
+                            <input asp-for="RAMFieldReport.CustomerRelatedIssues" class="form-control" />
+                            <span asp-validation-for="RAMFieldReport.CustomerRelatedIssues" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RAMFieldReport.WeatherAndCropSituationUpdate" class="control-label"></label>
+                            <input asp-for="RAMFieldReport.WeatherAndCropSituationUpdate" class="form-control" />
+                            <span asp-validation-for="RAMFieldReport.WeatherAndCropSituationUpdate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RAMFieldReport.ProductRelatedIssues" class="control-label"></label>
+                            <input asp-for="RAMFieldReport.ProductRelatedIssues" class="form-control" />
+                            <span asp-validation-for="RAMFieldReport.ProductRelatedIssues" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RAMFieldReport.Opportunities" class="control-label"></label>
+                            <input asp-for="RAMFieldReport.Opportunities" class="form-control" />
+                            <span asp-validation-for="RAMFieldReport.Opportunities" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RAMFieldReport.OtherRemarks" class="control-label"></label>
+                            <input asp-for="RAMFieldReport.OtherRemarks" class="form-control" />
+                            <span asp-validation-for="RAMFieldReport.OtherRemarks" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

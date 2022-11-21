@@ -1,0 +1,122 @@
+﻿@page
+@model TwigaCRM.Pages.CampaignBudgets.EditModel
+
+@{
+    ViewData["Title"] = "Edit Campaign Budget";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Campaign Budget</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form method="post" class="form-row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="CampaignBudget.Id" />
+                <div class="form-group col-md-12">
+                    <label asp-for="CampaignBudget.Description" class="control-label"></label>
+                    <input asp-for="CampaignBudget.Description" class="form-control" />
+                    <span asp-validation-for="CampaignBudget.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="CampaignBudget.FinancialYearId">Financial Year</label>
+                    <div class="row">
+                        <select id="ddlFinancialYears" asp-for="CampaignBudget.FinancialYearId" name="CampaignBudget.FinancialYearId" asp-items="ViewBag.FinancialYears" class="form-control pb-1" style="width:100%">
+                            <option value="">--  Select Financial Year  --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="CampaignBudget.FinancialYearId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="CampaignBudget.BusinessLineId">BusinessLine</label>
+                    <div class="row">
+                        <select id="ddlBusinessLines" asp-for="CampaignBudget.BusinessLineId" name="CampaignBudget.BusinessLineId" asp-items="ViewBag.BusinessLines" class="form-control pb-1" style="width:100%">
+                            <option value="">--  Select BusinessLine  --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="CampaignBudget.BusinessLineId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="CampaignBudget.Month" class="control-label"></label>
+                    <select asp-for="CampaignBudget.Month" class="form-control">
+                        <option value="">-- Select Month --</option>
+                        <option value="1">JAN</option>
+                        <option value="2">FEB</option>
+                        <option value="3">MAR</option>
+                        <option value="4">APR</option>
+                        <option value="5">MAY</option>
+                        <option value="6">JUN</option>
+                        <option value="7">JUL</option>
+                        <option value="8">AUG</option>
+                        <option value="9">SEP</option>
+                        <option value="10">OCT</option>
+                        <option value="11">NOV</option>
+                        <option value="12">DEC</option>
+                    </select>
+                    <span asp-validation-for="CampaignBudget.Month" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="CampaignBudget.Amount" class="control-label"></label>
+                    <input asp-for="CampaignBudget.Amount" class="form-control" />
+                    <span asp-validation-for="CampaignBudget.Amount" class="text-danger"></span>
+                </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./CampaignBudgets">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlBusinessLines").select2();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlFinancialYears").select2();
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlBusinessLines", function () {
+            $("input[name=BusinessLineId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlFinancialYears", function () {
+            $("input[name=FinancialYearId]").val($(this).find("option:selected").text());
+        });
+    </script>

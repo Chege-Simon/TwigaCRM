@@ -1,0 +1,97 @@
+﻿@page
+@model TwigaCRM.Pages.Roles.IndexModel
+
+@{
+    ViewData["Title"] = "AppRoles";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Roles</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th class="w-25">
+                        @Html.DisplayNameFor(model => model.AppRoles[0].Title)
+                    </th>
+                    <th class="w-25">
+                        @Html.DisplayNameFor(model => model.AppRoles[0].Description)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.AppRoles[0].CreateAt)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.AppRoles[0].UpdateAt)
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.AppRoles) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreateAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UpdateAt)
+                    </td>
+                    <td class="row">
+                        <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                        <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Permission Assignments" class="col-5">
+                            <i class="fa fa-link" aria-hidden="true"></i>
+                            </a>
+                    </td>
+                </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+</div>
+@*New Roles modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="AppRole.Title" class="control-label"></label>
+                            <input asp-for="AppRole.Title" class="form-control" />
+                            <span asp-validation-for="AppRole.Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="AppRole.Description" class="control-label"></label>
+                            <input asp-for="AppRole.Description" class="form-control" />
+                            <span asp-validation-for="AppRole.Description" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

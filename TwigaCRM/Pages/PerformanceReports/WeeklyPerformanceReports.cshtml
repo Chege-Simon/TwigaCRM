@@ -1,0 +1,354 @@
+﻿@page
+@model TwigaCRM.Pages.PerformanceReports.WeeklyPerformanceReportModel
+
+@{
+
+    if (Model.Targets.Count() >= 1)
+    {
+        ViewData["Title"] = @Model.Targets[0].SalesMovement.SalesPerson.FirstName + " " + @Model.Targets[0].SalesMovement.SalesPerson.LastName + " - Weekly Performance";
+    }
+    else
+    {
+        ViewData["Title"] = "NO Data";
+    }
+    decimal TargetQuantity;
+    decimal ActualQuantity;
+    decimal TargetValue;
+    decimal ActualValue;
+
+    System.Globalization.CultureInfo cult_info = System.Globalization.CultureInfo.CreateSpecificCulture("no");
+
+    System.Globalization.Calendar cal = cult_info.Calendar;
+    ////DateTime newDate = @Model.Targets[0].UpdateAt;
+    string year = "";
+    string month = "";
+    if (Model.Targets.Count() >= 1)
+    {
+        year = @Model.Targets[0].CreateAt.Year >= 1950 ? @Model.Targets[0].CreateAt.Year.ToString():@Model.Targets[0].UpdateAt.Year.ToString();
+        month = @Model.Targets[0].SalesMovement.Month > 9 ? @Model.Targets[0].SalesMovement.Month.ToString() : "0" + @Model.Targets[0].SalesMovement.Month.ToString();
+    }else{
+        year = DateTime.Now.Year.ToString();
+        month = "01";
+    }
+    string datestring = "01" + month + year;
+    //string datestring = "01" + "10" + "2022";
+    DateTime newDate = DateTime.ParseExact(datestring, "ddMMyyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+
+    int Week = cal.GetWeekOfYear(newDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek);
+    int Weektwo = Week + 1;
+    int Weekthree = Week + 2;
+    int Weekfour = Week + 3;
+    int Weekfive = Week + 4;
+    int WeekSix = Week + 5;
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center row">
+            <p class="h2 col-md-12">Week Performance Report</p>
+            @*<a asp-page="./DemoPrintOut" asp-route-id="@Model.Demo.Id" class="btn btn-success col-md-2">Generate Print Out</a>*@
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <form class="form-row" method="post">
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.SalesPersonId">Sales Person</label>
+                            <div class="row">
+                                <select id="ddlSalesPersons" asp-for="Input.SalesPersonId" name="Input.SalesPersonId" asp-items="ViewBag.SalesPersons" class="form-control" style="width: 100%">
+                                    <option value="">--  Select SalesPersons  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.SalesPersonId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.Month" class="control-label"></label>
+                            <select asp-for="Input.Month" class="form-control">
+                                <option value="">-- Select Month --</option>
+                                <option value="1">JAN</option>
+                                <option value="2">FEB</option>
+                                <option value="3">MAR</option>
+                                <option value="4">APR</option>
+                                <option value="5">MAY</option>
+                                <option value="6">JUN</option>
+                                <option value="7">JUL</option>
+                                <option value="8">AUG</option>
+                                <option value="9">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select>
+                            <span asp-validation-for="Input.Month" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.FinancialYearId">Financial Year</label>
+                            <div class="row">
+                                <select id="ddlFinancialYears" asp-for="Input.FinancialYearId" name="Input.FinancialYearId" asp-items="ViewBag.FinancialYears" class="form-control" style="width: 100%">
+                                    <option value="">--  Select FinancialYears  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.FinancialYearId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <button type="submit" asp-page="./PerformanceReports" asp-page-handler="WeeklyPerformance" class="btn btn-primary mb-2">Generate Report</button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            
+                            @if (Model.Targets.Count() >= 1)
+                            {
+                                <h3 class="card-title col-md-9">@Model.Targets[0].SalesMovement.SalesPerson.FirstName @Model.Targets[0].SalesMovement.SalesPerson.LastName Weekly Performance</h3>
+                            }
+                            else
+                            {
+                                <h3 class="card-title col-md-9">No Data</h3>
+                            }
+                            <span class="col-md-3">
+
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped " id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Product Name
+                                    </th>
+                                    <th>
+                                        Product Description
+                                    </th>
+                                    <th>
+                                        Monthly Target Volume
+                                    </th>
+                                    <th>
+                                        Monthly Actual Volume
+                                    </th>
+                                    <th>
+                                        Actual Volume Week 1
+                                    </th>
+                                    <th>
+                                        Actual Value Week 1
+                                    </th>
+                                    <th>
+                                        Actual Volume Week 2
+                                    </th>
+                                    <th>
+                                        Actual Value Week 2
+                                    </th>
+                                    <th>
+                                        Actual Volume Week 3
+                                    </th>
+                                    <th>
+                                        Actual Value Week 3
+                                    </th>
+                                    <th>
+                                        Actual Volume Week 4
+                                    </th>
+                                    <th>
+                                        Actual Value Week 4
+                                    </th>
+                                    <th>
+                                        Actual Volume Week 5
+                                    </th>
+                                    <th>
+                                        Actual Value Week 5
+                                    </th>
+                                    <th>
+                                        Actual Volume Week 6
+                                    </th>
+                                    <th>
+                                        Actual Value Week 6
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var target in Model.Targets)
+                                {
+                                    TargetQuantity = 0;
+                                    TargetQuantity = target.Volume;
+                                    ActualQuantity = 0;
+                                    foreach (var dm in Model.DailyMovements)
+                                    {
+                                        if (target.Product == dm.Product)
+                                        {
+                                            ActualQuantity += dm.Quantity;
+                                        }
+                                    }
+
+                                    TargetValue = (TargetQuantity / target.Product.PackagingSize) * (target.Product.Price * target.Product.PackagingSize);
+                                    ActualValue = (ActualQuantity / target.Product.PackagingSize) * (target.Product.Price * target.Product.PackagingSize);
+
+                                    decimal ActualQuantityWeek1 = 0;
+                                    decimal ActualQuantityWeek2 = 0;
+                                    decimal ActualQuantityWeek3 = 0;
+                                    decimal ActualQuantityWeek4 = 0;
+                                    decimal ActualQuantityWeek5 = 0;
+                                    decimal ActualQuantityWeek6 = 0;
+                                    foreach (var dm in Model.DailyMovements)
+                                    {
+                                        if (target.Product == dm.Product && cal.GetWeekOfYear(dm.DailyMovementReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Week)
+                                        {
+                                            ActualQuantityWeek1 += dm.Quantity;
+                                        }
+                                    }
+                                    foreach (var dm in Model.DailyMovements)
+                                    {
+                                        if (target.Product == dm.Product && cal.GetWeekOfYear(dm.DailyMovementReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Weektwo)
+                                        {
+                                            ActualQuantityWeek2 += dm.Quantity;
+                                        }
+                                    }
+                                    foreach (var dm in Model.DailyMovements)
+                                    {
+                                        if (target.Product == dm.Product && cal.GetWeekOfYear(dm.DailyMovementReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Weekthree)
+                                        {
+                                            ActualQuantityWeek3 += dm.Quantity;
+                                        }
+                                    }
+                                    foreach (var dm in Model.DailyMovements)
+                                    {
+                                        if (target.Product == dm.Product && cal.GetWeekOfYear(dm.DailyMovementReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Weekfour)
+                                        {
+                                            ActualQuantityWeek4 += dm.Quantity;
+                                        }
+                                    }
+                                    foreach (var dm in Model.DailyMovements)
+                                    {
+                                        if (target.Product == dm.Product && cal.GetWeekOfYear(dm.DailyMovementReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == Weekfive)
+                                        {
+                                            ActualQuantityWeek5 += dm.Quantity;
+                                        }
+                                    }
+                                    foreach (var dm in Model.DailyMovements)
+                                    {
+                                        if (target.Product == dm.Product && cal.GetWeekOfYear(dm.DailyMovementReport.SalesDate, cult_info.DateTimeFormat.CalendarWeekRule, cult_info.DateTimeFormat.FirstDayOfWeek) == WeekSix)
+                                        {
+                                            ActualQuantityWeek6 += dm.Quantity;
+                                        }
+                                    }
+                                    decimal ActualValueWeek1 = (ActualQuantityWeek1 / target.Product.PackagingSize) * (target.Product.Price * target.Product.PackagingSize);
+                                    decimal ActualValueWeek2 = (ActualQuantityWeek2 / target.Product.PackagingSize) * (target.Product.Price * target.Product.PackagingSize);
+                                    decimal ActualValueWeek3 = (ActualQuantityWeek3 / target.Product.PackagingSize) * (target.Product.Price * target.Product.PackagingSize);
+                                    decimal ActualValueWeek4 = (ActualQuantityWeek4 / target.Product.PackagingSize) *(target.Product.Price * target.Product.PackagingSize);
+                                    decimal ActualValueWeek5 = (ActualQuantityWeek5 / target.Product.PackagingSize) * (target.Product.Price * target.Product.PackagingSize);
+                                    decimal ActualValueWeek6 = (ActualQuantityWeek6 / target.Product.PackagingSize) * (target.Product.Price * target.Product.PackagingSize);
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => target.Product.Name)
+                                            <span>( </span>
+                                            @Html.DisplayFor(modelItem => target.Product.Code)
+                                            <span>) </span>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => target.Product.Description)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}",@TargetQuantity)
+                                            @Html.DisplayFor(modelItem => target.Product.UnitOfMeasure)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}",@ActualQuantity)
+                                            @Html.DisplayFor(modelItem => target.Product.UnitOfMeasure)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}", @ActualQuantityWeek1)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualValueWeek1)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}", @ActualQuantityWeek2)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualValueWeek2)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}", @ActualQuantityWeek3)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualValueWeek3)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}", @ActualQuantityWeek4)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualValueWeek4)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}", @ActualQuantityWeek5)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualValueWeek5)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}", @ActualQuantityWeek6)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", @ActualValueWeek6)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./PerformanceReports">Back</a>
+                    </div>
+                </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlFinancialYears").select2();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlSalesPersons").select2();
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlFinancialYears", function () {
+            $("input[name=FinancialYearId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlSalesPersons", function () {
+            $("input[name=SalesPersonId]").val($(this).find("option:selected").text());
+        });
+    </script>

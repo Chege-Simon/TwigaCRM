@@ -1,0 +1,91 @@
+﻿@page
+@model TwigaCRM.Pages.RequestedProducts.ReportModel
+
+@{
+    ViewData["Title"] = "Campaign Report";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Campaign Report</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+        <form method="post" class="form-row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="RequestedProduct.Id" />
+                <input type="hidden" asp-for="RequestedProduct.IsFOAApproved" />
+            <div class="form-group col-md-6">
+                <label asp-for="RequestedProduct.CampaignId" class="control-label">Campaign Title</label>
+                <input asp-for="RequestedProduct.CampaignId" class="form-control" hidden/>
+                <input value="@Model.RequestedProduct.Campaign.Title" class="form-control" disabled/>
+                <span asp-validation-for="RequestedProduct.CampaignId" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="RequestedProduct.ProductId" class="control-label">Product</label>
+                <input asp-for="RequestedProduct.ProductId" class="form-control" hidden />
+                <input value="@Model.RequestedProduct.Product.Name - @Model.RequestedProduct.Product.Description (@Model.RequestedProduct.Product.Code)" class="form-control" disabled />
+                <span asp-validation-for="RequestedProduct.ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="RequestedProduct.CurrentMovement" class="control-label"></label>
+                    <input asp-for="RequestedProduct.CurrentMovement" class="form-control" hidden />
+                    <input value="@String.Format("{0:#,##0.00}",@Model.RequestedProduct.CurrentMovement)" class="form-control" disabled />
+                <span asp-validation-for="RequestedProduct.CurrentMovement" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="RequestedProduct.CurrentMovementValue" class="control-label"></label>
+                <input asp-for="RequestedProduct.CurrentMovementValue" class="form-control" hidden />
+                <input value="KSh @String.Format("{0:#,##0.00}",@Model.RequestedProduct.CurrentMovementValue)" class="form-control" disabled/>
+                <span asp-validation-for="RequestedProduct.CurrentMovementValue" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="RequestedProduct.ProjectedMovement" class="control-label"></label>
+                    <input asp-for="RequestedProduct.ProjectedMovement" class="form-control" hidden />
+                    <input asp-for="RequestedProduct.ProjectedMovement" class="form-control" hidden />
+                    <input value="@String.Format("{0:#,##0.00}",@Model.RequestedProduct.ProjectedMovement)" class="form-control" disabled />
+                <span asp-validation-for="RequestedProduct.ProjectedMovement" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="RequestedProduct.ProjectedMovementValue" class="control-label"></label>
+                    <input asp-for="RequestedProduct.ProjectedMovementValue" class="form-control" hidden />
+                <input asp-for="RequestedProduct.ProjectedMovementValue" class="form-control" hidden />
+                <input value="KSh @String.Format("{0:#,##0.00}",@Model.RequestedProduct.ProjectedMovementValue)" class="form-control" disabled/>
+                <span asp-validation-for="RequestedProduct.ProjectedMovementValue" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="RequestedProduct.ActualMovement" class="control-label"></label>
+                <input asp-for="RequestedProduct.ActualMovement" class="form-control" />
+                <span asp-validation-for="RequestedProduct.ActualMovement" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="RequestedProduct.ImportantObservation" class="control-label"></label>
+                <input asp-for="RequestedProduct.ImportantObservation" class="form-control" />
+                <span asp-validation-for="RequestedProduct.ImportantObservation" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="RequestedProduct.FollowUpAction" class="control-label"></label>
+                <input asp-for="RequestedProduct.FollowUpAction" class="form-control" />
+                <span asp-validation-for="RequestedProduct.FollowUpAction" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="../Campaigns/Details" asp-route-id="@Model.RequestedProduct.CampaignId">Back to Campaign Details</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

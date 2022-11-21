@@ -1,0 +1,160 @@
+﻿@page
+@model TwigaCRM.Pages.Customers.EditModel
+
+@{
+    ViewData["Title"] = "Edit Customers";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Business Line</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Customer.Id" />
+            <div class="form-group">
+                <label asp-for="Customer.ContactPersonName" class="control-label"></label>
+                <input asp-for="Customer.ContactPersonName" class="form-control" />
+                <span asp-validation-for="Customer.ContactPersonName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Customer.SiteName" class="control-label"></label>
+                <input asp-for="Customer.SiteName" class="form-control" />
+                <span asp-validation-for="Customer.SiteName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Customer.PhoneNumber" class="control-label"></label>
+                <input asp-for="Customer.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Customer.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Customer.Email" class="control-label"></label>
+                <input asp-for="Customer.Email" class="form-control" />
+                <span asp-validation-for="Customer.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Customer.CustomerType" class="control-label">Customer Type</label>
+                    <select id="ddlCustomerTypes" asp-for="Customer.CustomerType" name="Customer.CustomerType" class="form-control">
+                    <option value="">-- Select Customer Type --</option>
+                    <option value="Stockist">Stockist</option>
+                    <option value="Main Distributor">Main Distributor</option>
+                    <option value="Farmer">Farmer</option>
+                </select>
+                <span asp-validation-for="Customer.CustomerType" class="text-danger"></span>
+            </div>
+                <div class="form-group farmerdetails">
+                <label asp-for="Customer.FarmerType" class="control-label">Farmer Type <span class="text-muted"> Only For Customer Type-Farmers</span></label>
+                <select asp-for="Customer.FarmerType" class="form-control">
+                    <option value="">-- Select Farmer Type --</option>
+                    <option value="S.S.F">S.S.F</option>
+                    <option value="M.S.F">M.S.F</option>
+                </select>
+                <span asp-validation-for="Customer.FarmerType" class="text-danger"></span>
+                </div>
+                <div class="form-group farmerdetails">
+                    <label asp-for="Customer.FarmerType" class="control-label">Farmer Size <span class="text-muted">Only For Customer Type-Farmers</span></label>
+                    <input asp-for="Customer.FarmSize" class="form-control" />
+                    <span asp-validation-for="Customer.FarmerType" class="text-danger"></span>
+                </div>
+            <div class="form-group col-md-12">
+                <label asp-for="Customer.TownId">Town</label>
+                <div class="row">
+                    <select id="ddlTowns" asp-for="Customer.TownId" name="Customer.TownId" asp-items="ViewBag.Towns" class="form-control">
+                        <option value="">--  Select Town  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="Customer.TownId" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-12">
+                <label asp-for="Customer.ZoneId">Zone</label>
+                <div class="row">
+                    <select id="ddlZones" asp-for="Customer.ZoneId" name="Customer.ZoneId" asp-items="ViewBag.Zones" class="form-control pb-1 col-12">
+                        <option value="">--  Select Zone  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="Customer.ZoneId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+<div>
+    <a asp-page="./Customers">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    $(document).ready(function() {
+      $("#ddlTowns").select2({
+              dropdownParent: $("#InputModal")
+      });
+});
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlTowns").select2();
+    });
+    $("body").on("change", "#ddlTowns", function () {
+        $("input[name=TownId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $("#ddlZones").select2();
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("change", "#ddlZones", function () {
+        $("input[name=ZoneId]").val($(this).find("option:selected").text());
+    });
+</script>
+
+    <script>
+        $("body").on("change", "#ddlCustomerTypes", function () {
+            var customerType = $(this).val();
+            if (customerType == "Farmer") {
+                $(".farmerdetails").show();
+            } else {
+                $(".farmerdetails").hide();
+            }
+            console.log()
+        });
+        $("body").on("load", "#ddlCustomerTypes", function () {
+            var customerType = $(this).val();
+            if (customerType == "Farmer") {
+                $(".farmerdetails").show();
+            } else {
+                $(".farmerdetails").hide();
+            }
+            console.log()
+        });
+    </script>

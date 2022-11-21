@@ -1,0 +1,249 @@
+﻿@page
+@using System.Collections
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+    int salesCount = 0;
+    int callCount = 0;
+    string[] colors = { "primary", "secondary", "success", "warning", "danger", "dark", "info", "primary", "secondary", "success", "warning", "danger", "dark", "info" };
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.js" type="text/javascript"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<div class="container-fluid row">
+    <div class="col-12 row">
+        <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+                <div class="inner">
+                    @foreach (var dmr in Model.DailyMovementReports)
+                    {
+                        @if (dmr.TLstatus == "Approved")
+                        {
+                            salesCount += dmr.DailyMovements.Count();
+                        }
+                    }
+                    <h3>@salesCount</h3>
+                    <p>Sales Recorded</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-shopping-cart fa-4x" aria-hidden="true"></i>
+                </div>
+                <a asp-page="/DailyMovementReports/DailyMovementReports" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+                <div class="inner">
+                    @foreach (var call in Model.Calls)
+                    {
+                        @if (call.Status == "Closed")
+                        {
+                            callCount += 1;
+                        }
+                    }
+                    <h3>@callCount</h3>
+
+                    <p>Calls Recorded</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-phone fa-4x" aria-hidden="true"></i>
+                </div>
+                <a asp-page="/Calls/Calls" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>@Model.AppUsers.Count()</h3>
+
+                    <p>User Registrations</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-users" aria-hidden="true"></i>
+                </div>
+                <a asp-page="/Users/Users" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>@Model.Customers.Count()</h3>
+
+                    <p>Customers</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-users" aria-hidden="true"></i>
+                </div>
+                <a asp-page="/Customers/Customers" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+    </div>
+    <div class="card card-outline card-primary col-md-6">
+        <div class="card-header text-center">
+            <p class="h3">Overall Product Sales Targets vs Actual Sales</p>
+        </div>
+        <div class="card-body row">
+            <div class="col-12">
+                <canvas id="myChart" style="max-width:100%; max-height:100%"></canvas>
+                <div class="d-flex flex-row justify-content-end">
+                    <span class="mr-2">
+                        <i class="fas fa-square text-success"></i> Target
+                    </span>
+
+                    <span>
+                        <i class="fas fa-square text-primary"></i> Actual
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="card card-outline card-primary col-md-5">
+        <div class="card-header text-center">
+            <p class="h3">Regional Target Achievement</p>
+        </div>
+        <div class="card-body row">
+            <div class="col-12">
+                <p class="text-center">
+                    <strong>Goal Completion</strong>
+                </p>
+                @foreach (var regiongraph in Model.RegionGraphs)
+                {
+                    if (regiongraph.Name.Contains("Country")) continue;
+                    <div class="progress-group">
+                        @regiongraph.Name
+                        <span class="float-right"><b>@String.Format("{0:#,##0.00}", regiongraph.ActualAmount)</b>/@String.Format("{0:#,##0.00}", regiongraph.TargetAmount)</span>
+                        <div class="progress progress-sm">
+
+                            @if (regiongraph.ActualAmount != 0 || regiongraph.TargetAmount != 0)
+                            {
+                                <div class="progress-bar bg-@(colors[regiongraph.Id - 1])" style="width: @((regiongraph.ActualAmount / regiongraph.TargetAmount) * 100)%"></div>
+                            }
+                            else
+                            {
+                                <div class="progress-bar bg-@(colors[regiongraph.Id - 1])" style="width: 0%"></div>
+                            }
+                        </div>
+                    </div>
+                    <!-- /.progress-group -->
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+<script>
+    
+    $(document).ready(function () {
+        fetch('Charts/', {
+            method: 'GET',
+        }).then((response) => {
+            response.json()
+                .then((json) => {
+                    var _data = json;
+                    var _chartLabels = _data[0].slice(0, 10);
+                    var _chart1Data = _data[1].slice(0, 10);
+                    var _chart2Data = _data[2].slice(0, 10);
+                    var _barColor = ["black"];
+                        console.log(_data[1]);
+                        var backgroundColorsD1 = [];
+                        var backgroundColorsD2 = [];
+                    var myChart = new Chart ("myChart",{
+                        type: "bar",
+                        data: {
+                            labels: _chartLabels,
+                            datasets: [{
+                                label: "Target",
+                                    data: _chart1Data,
+                                    backgroundColor: backgroundColorsD1,
+                                    //color: "red",
+                                    //fill: true,
+                                    //borderColor: "red",
+                                    //backgroundColor: "red, 0.5",
+                                }, {
+                                    label: "Actual",
+                                    data: _chart2Data,
+                                    fill: true,
+                                    backgroundColor: backgroundColorsD2,
+                                    //borderColor: "blue",
+                                    //backgroundColor: "blue, 0.5",
+                                }]
+                        },
+                        options:{
+                            title: {
+                                display: true,
+                                text: 'Targets vs Actual Sales'
+                            },
+                            legend:{
+                                    display: false,
+                                    position: 'bottom',
+                                    labels: {
+                                        fontColor: "#000080",
+                                    }
+                                }, scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero: true,
+                                            callback: function (value, index, ticks) {
+                                                return 'Ksh ' + value;
+                                            }
+                                        }
+                                    }]
+                                }
+                        }
+                        })
+                        for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
+                             if (myChart.data.datasets[0].data[i] < 0) {
+                                backgroundColorsD1.push("red");
+                            }
+                            else {
+                                backgroundColorsD1.push("green");
+                            }
+                        }
+                        for (i = 0; i < myChart.data.datasets[1].data.length; i++) {
+                            if (myChart.data.datasets[1].data[i] < 0) {
+                                backgroundColorsD1.push("red");
+                            }
+                            else {
+                                backgroundColorsD2.push("blue");
+                            }
+                        }
+
+                        myChart.update();
+                })
+        });
+    });
+</script>
+<script>
+    // check for Geolocation support
+    if (navigator.geolocation) {
+        console.log('Geolocation is supported!');
+    } else {
+        console.log('Geolocation is not supported for this Browser/OS.');
+    }
+</script>
+<script>
+        //    ,
+        //xAxes: [{
+        //    ticks: {
+        //        // For a category axis, the val is the index so the lookup via getLabelForValue is needed
+        //        callback: function (val, index) {
+        //            // Hide every 2nd tick label
+        //            return index % 2 === 0 ? val : '';
+        //        },
+        //        color: 'red',
+        //    }
+        //}]
+</script>

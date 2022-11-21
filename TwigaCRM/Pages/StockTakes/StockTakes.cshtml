@@ -1,0 +1,216 @@
+﻿@page
+@model TwigaCRM.Pages.StockTakes.IndexModel
+
+@{
+    ViewData["Title"] = "Stock Take";
+    var AllStockTakes = @Model.StockTakes;
+    var DisplayableStockTakes = @Model.StockTakes;
+    bool CanViewAllStockTakes = false;
+    foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "view_all_stock_takes_list")
+            {
+                CanViewAllStockTakes = true;
+                break;
+            }
+        }
+    }
+    if (CanViewAllStockTakes)
+    {
+        DisplayableStockTakes = AllStockTakes;
+    }
+    else
+    {
+        DisplayableStockTakes = AllStockTakes.Where(d => d.RetailAccountManagerId == Model.AppUser.Id).ToList();
+    }
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Stock Take</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" data-toggle="modal" data-target="#InputModal">New Stock Record</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+    <thead>
+        <tr>
+            <th>
+                R.A.M
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockTakes[0].Product)
+            </th>
+            <th>
+                Prodcut Descritpion
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockTakes[0].Quantity)
+            </th>
+            <th>
+                Volume
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockTakes[0].MainDistributor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockTakes[0].StockTakeDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockTakes[0].UpdateAt)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+                @foreach (var item in DisplayableStockTakes)
+                {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RetailAccountManager.FirstName)
+                @Html.DisplayFor(modelItem => item.RetailAccountManager.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Name)
+                <span>(</span>
+                @Html.DisplayFor(modelItem => item.Product.Code)
+                <span>)</span>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Description)
+            </td>
+            <td>
+                @String.Format("{0:#,##0.00}",item.Quantity)
+            </td>
+            <td>
+                @String.Format("{0:#,##0.00}",(item.Quantity * item.Product.PackagingSize))
+                @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MainDistributor.SiteName)
+                <span> - </span>
+                @Html.DisplayFor(modelItem => item.MainDistributor.ContactPersonName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockTakeDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateAt)
+            </td>
+            <td class="row">
+                <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>            </td>
+        </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*New Daily Movement modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="StockTake.RetailAccountManagerId" class="control-label"></label>
+                            <input asp-for="StockTake.RetailAccountManagerId" value="@Model.AppUser.Id" class="form-control" type="hidden"/>
+                            <input value="@Model.AppUser.Email" class="form-control" disabled/>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="StockTake.ProductId">Product</label>
+                            <div class="row">
+                                <select id="ddlProducts" asp-for="StockTake.ProductId" name="StockTake.ProductId" asp-items="ViewBag.Products" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Products  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="StockTake.ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="StockTake.Quantity" class="control-label">Pcs</label>
+                            <input asp-for="StockTake.Quantity" class="form-control" />
+                            <span asp-validation-for="StockTake.Quantity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="StockTake.MainDistributorId">Main Distributor</label>
+                            <div class="row">
+                                <select id="ddlMainDistributors" asp-for="StockTake.MainDistributorId" name="StockTake.MainDistributorId" asp-items="ViewBag.MainDistributors" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Main Distributor  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="StockTake.MainDistributorId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="StockTake.StockTakeDate" class="control-label"></label>
+                            <input asp-for="StockTake.StockTakeDate" class="form-control" />
+                            <span asp-validation-for="StockTake.StockTakeDate" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlProducts").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlMainDistributors").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlProducts", function () {
+            $("input[name=ProductId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlMainDistributors", function () {
+            $("input[name=MainDistributorId]").val($(this).find("option:selected").text());
+        });
+    </script>

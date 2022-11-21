@@ -1,0 +1,96 @@
+﻿@page
+@model TwigaCRM.Pages.Routes.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Route</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form method="post" class="form-row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Route.Id" />
+                <div class="form-group col-12">
+                    <label asp-for="Route.PlanId" class="control-label">Plan Start Date</label>
+                    <input type="hidden" asp-for="Route.PlanId" />
+                    <input disabled value="@Model.Route.Plan.StartDate" class="form-control" />
+                </div>
+                <div class="form-group col-12">
+                    <label asp-for="Route.Day" class="control-label"></label>
+                    <input disabled asp-for="Route.Day" value="@Model.Route.RouteDate.DayOfWeek" class="form-control" />
+                    <span asp-validation-for="Route.Day" class="text-danger"></span>
+                </div>
+                <div class="form-group col-12">
+                    <label asp-for="Route.RouteDate" class="control-label"></label>
+                    <input disabled value="@Model.Route.RouteDate" class="form-control" />
+                    <input type="hidden" asp-for="Route.RouteDate" class="form-control" />
+                    <span asp-validation-for="Route.RouteDate" class="text-danger"></span>
+                </div>
+                <div class="form-group col-12 col-md-12">
+                    <label asp-for="Route.ZoneId">Zone </label>
+                    <div class="row">
+                        <select id="ddlZones" asp-for="Route.ZoneId" name="Route.ZoneId" asp-items="ViewBag.Zones" class="form-control" style="width: 100%">
+                            <option value="">--  Select Zone  --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Route.ZoneId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-12">
+                    <label asp-for="Route.Activity" class="control-label"></label>
+                    <input asp-for="Route.Activity" class="form-control" />
+                    <span asp-validation-for="Route.Activity" class="text-danger"></span>
+                </div>
+            <div class="form-group col-12">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+                </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Plans/Details" asp-route-id="Route.PlanId">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlZones").select2();
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlZones", function () {
+            $("input[name=ZoneId]").val($(this).find("option:selected").text());
+        });
+    </script>

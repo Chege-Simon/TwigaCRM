@@ -1,0 +1,197 @@
+﻿@page
+@model TwigaCRM.Pages.PickAndReturnForms.IndexModel
+
+@{
+    ViewData["Title"] = "Pick And Return Forms";
+    var AllPickAndReturnForms = @Model.PickAndReturnForms;
+    var DisplayablePickAndReturnForms = @Model.PickAndReturnForms;
+    bool CanViewAllPickAndReturnForms = false;
+    foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "view_all_pick_and_return_forms_list")
+            {
+                CanViewAllPickAndReturnForms = true;
+                break;
+            }
+        }
+    }
+    if (CanViewAllPickAndReturnForms)
+    {
+        DisplayablePickAndReturnForms = AllPickAndReturnForms;
+    }
+    else
+    {
+        DisplayablePickAndReturnForms = AllPickAndReturnForms.Where(d => d.VSAId == Model.AppUser.Id).ToList();
+    }
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Pick And Return Forms</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" data-toggle="modal" data-target="#InputModal">New P & R Form</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PickAndReturnForms[0].MainDistributor)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PickAndReturnForms[0].PickDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PickAndReturnForms[0].VSA)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PickAndReturnForms[0].IsSubmitted)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PickAndReturnForms[0].FOAstatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PickAndReturnForms[0].TLstatus)
+                    </th>
+                    <th>
+                        Attched Form
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PickAndReturnForms[0].UpdateAt)
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in DisplayablePickAndReturnForms)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MainDistributor.SiteName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PickDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VSA.FirstName)
+                            @Html.DisplayFor(modelItem => item.VSA.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsSubmitted)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FOAstatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TLstatus)
+                        </td>
+                        <td class="text-success">
+                            @if (item.FormUrl != null)
+                            {
+                                <a asp-page="../Demos/Details" asp-page-handler="DownloadFile" asp-route-fileName="@item.FormUrl" data-toggle="tooltip" data-placement="top" title="Download Invoice" class="col-5"><i class="fa fa-download" aria-hidden="true"></i></a>
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdateAt)
+                        </td>
+                        <td>
+                            @if (item.IsSubmitted)
+                            {
+                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a>
+                            }
+                            else
+                            {
+                                <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                            }
+                            | <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*New P & R modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Daily Movement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="PickAndReturnForm.VSAId" class="control-label">V.S.A</label>
+                            <input class="form-control" value="@Model.AppUser.FirstName @Model.AppUser.LastName" disabled />
+                            <input asp-for="PickAndReturnForm.VSAId" class="form-control" value="@Model.AppUser.Id" hidden />
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="PickAndReturnForm.MainDistributorId">Main Distributor</label>
+                            <div class="row">
+                                <select id="ddlDistributors" asp-for="PickAndReturnForm.MainDistributorId" name="PickAndReturnForm.MainDistributorId" asp-items="ViewBag.MainDistributors" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Main Distributor  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="PickAndReturnForm.MainDistributorId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PickAndReturnForm.PickDate" class="control-label"></label>
+                            <input asp-for="PickAndReturnForm.PickDate" class="form-control" />
+                            <span asp-validation-for="PickAndReturnForm.PickDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Upload" class="control-label">Upload File</label>
+                            <input asp-for="Upload" class="form-control" required/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlDistributors").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlDistributors", function () {
+            $("input[name=MainDistributorId]").val($(this).find("option:selected").text());
+        });
+    </script>

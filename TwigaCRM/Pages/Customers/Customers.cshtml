@@ -1,0 +1,561 @@
+﻿@page
+@model TwigaCRM.Pages.Customers.IndexModel
+
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<nav class="container">
+  <div class="nav nav-tabs row" id="nav-tab" role="tablist">
+    <button class="cool nav-link col-3 font-weight-bold h2 active" id="nav-stockist-tab" data-toggle="tab" data-target="#nav-stockist" type="button" role="tab" aria-controls="nav-stockist" aria-selected="true">Stockists</button>
+    <button class="nav-link col-3 font-weight-bold h2" id="nav-maindistributor-tab" data-toggle="tab" data-target="#nav-maindistributor" type="button" role="tab" aria-controls="nav-maindistributor" aria-selected="false">Main Distributors</button>
+    <button class="cool nav-link col-3 font-weight-bold h2" id="nav-farmer-tab" data-toggle="tab" data-target="#nav-farmer" type="button" role="tab" aria-controls="nav-farmer" aria-selected="true">Farmers</button>
+    <button class="cool nav-link col-3 font-weight-bold h2" id="nav-corporate-tab" data-toggle="tab" data-target="#nav-corporate" type="button" role="tab" aria-controls="nav-corporate" aria-selected="true">Corporates</button>
+    @*<button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>*@
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-stockist" role="tabpanel" aria-labelledby="nav-stockist-tab">
+      
+    <div class="card">
+        <div class="card-header row">
+            <h3 class="card-title col-md-8">Stockists</h3>
+            <span class="col-md-2">
+                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Customer</a>
+            </span>
+        <span class="col-md-2">
+            <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Customers</a>
+        </span>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-bordered table-striped dataTable">
+        <thead>
+             <tr>
+                <th>
+                    Contact Person Name
+                </th>
+                <th>
+                    Site Name
+                </th>
+                <th>
+                    Phone Number
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].CustomerType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].Town)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model.Customers) {
+                @if (customer.CustomerType == "Stockist")
+                    {
+                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.ContactPersonName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.SiteName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.PhoneNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.CustomerType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.Town.Name)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@customer.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@customer.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+    </table>
+    </div>
+</div>
+  </div>
+  <div class="tab-pane fade" id="nav-maindistributor" role="tabpanel" aria-labelledby="nav-maindistributor-tab">
+      
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-8">Main Distributors</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Customer</a>
+        </span>
+        <span class="col-md-2">
+            <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Customers</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable">
+    <thead>
+             <tr>
+                <th>
+                    Contact Person Name
+                </th>
+                <th>
+                    Site Name
+                </th>
+                <th>
+                    Phone Number
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].CustomerType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].Town)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model.Customers) {
+                @if (customer.CustomerType == "Main Distributor")
+                    {
+                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.ContactPersonName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.SiteName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.PhoneNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.CustomerType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.Town.Name)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@customer.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@customer.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+</table>
+    </div>
+</div>
+  </div>
+  <div class="tab-pane fade" id="nav-farmer" role="tabpanel" aria-labelledby="nav-farmer-tab">
+      
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-8">Farmers</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Customer</a>
+        </span>
+        <span class="col-md-2">
+            <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Customers</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable">
+    <thead>
+             <tr>
+                <th>
+                    Contact Person Name
+                </th>
+                <th>
+                    Site Name
+                </th>
+                <th>
+                    Phone Number
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].CustomerType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].FarmSize)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].Town)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model.Customers) {
+                @if (customer.CustomerType == "Farmer")
+                    {
+                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.ContactPersonName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.SiteName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.PhoneNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.CustomerType)
+                                <span> - </span>
+                                @Html.DisplayFor(modelItem => customer.FarmerType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.FarmSize)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.Town.Name)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@customer.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@customer.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+</table>
+    </div>
+</div>
+  </div>
+  <div class="tab-pane fade" id="nav-corporate" role="tabpanel" aria-labelledby="nav-corporate-tab">
+      
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-8">Corporate</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Customer</a>
+        </span>
+        <span class="col-md-2">
+            <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Customers</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable">
+    <thead>
+             <tr>
+                <th>
+                    Contact Person Name
+                </th>
+                <th>
+                    Site Name
+                </th>
+                <th>
+                    Phone Number
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].CustomerType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].FarmSize)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customers[0].Town)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model.Customers) {
+                @if (customer.CustomerType == "Corporate")
+                    {
+                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.ContactPersonName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.SiteName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.PhoneNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.CustomerType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.FarmSize)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => customer.Town.Name)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@customer.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@customer.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+</table>
+    </div>
+</div>
+  </div>
+  @*<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>*@
+</div>
+
+@*New Customer modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Customer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Customer.ContactPersonName" class="control-label"></label>
+                            <input asp-for="Customer.ContactPersonName" class="form-control" />
+                            <span asp-validation-for="Customer.ContactPersonName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Customer.SiteName" class="control-label"></label>
+                            <input asp-for="Customer.SiteName" class="form-control" />
+                            <span asp-validation-for="Customer.SiteName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Customer.PhoneNumber" class="control-label"></label>
+                            <input asp-for="Customer.PhoneNumber" class="form-control" />
+                            <span asp-validation-for="Customer.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Customer.Email" class="control-label"></label>
+                            <input asp-for="Customer.Email" class="form-control" />
+                            <span asp-validation-for="Customer.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Customer.CustomerType" class="control-label"></label>
+                            <select id="ddlCustomerTypes" asp-for="Customer.CustomerType" name="Customer.CustomerType" class="form-control">
+                                <option value="">-- Select Customer Type --</option>
+                                <option value="Stockist">Stockist</option>
+                                <option value="Main Distributor">Main Distributor</option>
+                                <option value="Farmer">Farmer</option>
+                                <option value="Corporate">Corporate</option>
+                            </select>
+                            <span asp-validation-for="Customer.CustomerType" class="text-danger"></span>
+                        </div>
+                        <div class="form-group farmerdetails">
+                            <label asp-for="Customer.FarmerType" class="control-label">Farmer Type <span class="text-muted">Only For Customer Type-Farmers</span></label>
+                            <select asp-for="Customer.FarmerType" class="form-control">
+                                <option value="">-- Select Farmer Type --</option>
+                                <option value="S.S.F">S.S.F</option>
+                                <option value="M.S.F">M.S.F</option>
+                            </select>
+                            <span asp-validation-for="Customer.FarmerType" class="text-danger"></span>
+                        </div>
+                        <div class="form-group farmersize">
+                            <label asp-for="Customer.FarmSize" class="control-label">Farmer Size <span class="text-muted">Only For Customer Type-Farmers</span></label>
+                            <input asp-for="Customer.FarmSize" class="form-control" />
+                            <span asp-validation-for="Customer.FarmSize" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Customer.TownId">Town</label>
+                            <div class="row">
+                                <select id="ddlTowns" asp-for="Customer.TownId" name="Customer.TownId" asp-items="ViewBag.Towns" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Town  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Customer.TownId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Customer.ZoneId">Zone</label>
+                            <div class="row">
+                                <select id="ddlZones" asp-for="Customer.ZoneId" name="Customer.ZoneId" asp-items="ViewBag.Zones" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Zone  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Customer.ZoneId" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Import modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="ImportModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Receipt</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div>
+                           <p>Load Customers from Excel Worksheet(supported file types are .xls or .xlsx)</p> 
+                           <p>Excel file should have columns in following order: </p> 
+                           <p>Contact Person Name,Site Name,Phone Number,Email,Customer Type,Town,Zone,Farmer Type,Farm Size</p> 
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Upload" class="control-label">Upload File</label>
+                            <input asp-for="Upload" class="form-control" />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="Import" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script type="text/javascript">
+    $(document).ready(function() {
+      $("#ddlTowns").select2({
+              dropdownParent: $("#InputModal")
+      });
+});
+</script>
+<script>
+    $(document).ready(function() {
+        $('button[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            changeSelect()
+        })
+
+        // Select2
+        function changeSelect() {
+            $("#ddlTowns").select2({
+                tags: true,
+                dropdownParent: $("#InputModal")
+            })
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#FarmerType").hide();
+        $("#ddlZones").select2({
+            dropdownParent: $("#InputModal")
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("change", "#ddlZones", function () {
+        $("input[name=ZoneId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script type="text/javascript">
+    //$(function () {
+    //    $("#ddlTowns").select2();
+    //});
+    $("body").on("change", "#ddlTowns", function () {
+        $("input[name=TownId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $(".dataTable").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false, "orderCellsTop" : true,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+});
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+	$('button[data-toggle="tab"]').on('show.bs.tab', function(e) {
+		localStorage.setItem('activeTab', $(e.target).attr('id'));
+	});
+	var activeTab = localStorage.getItem('activeTab');
+	if(activeTab){
+		$('#nav-tab #' + activeTab).tab('show');
+	}
+});
+</script>
+<script>
+        $("body").on("change", "#ddlCustomerTypes", function () {
+            var customerType = $(this).val();
+            if(customerType == "Farmer"){
+                $(".farmerdetails").show();
+                $(".farmersize").show();
+            }
+            if(customerType == "Corporate" || customerType == "Farmer"){
+                $(".farmersize").show();
+            }
+            else{
+                $(".farmerdetails").hide();
+                $(".farmersize").hide();
+            }
+            
+            console.log()
+        });
+</script>

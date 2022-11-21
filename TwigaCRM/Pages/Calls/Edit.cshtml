@@ -1,0 +1,176 @@
+﻿@page
+@model TwigaCRM.Pages.Calls.EditModel
+
+@{
+    ViewData["Title"] = "Edit - Call";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Call</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form method="post" class="form-row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Call.Id" />
+                <div class="form-group col-md-4">
+                    <label asp-for="Call.SpokenToId" class="control-label">Spoken To: </label>
+                    <input class="form-control" value="@Model.AppUser.FirstName @Model.AppUser.LastName" disabled />
+                    <input asp-for="Call.SpokenToId" class="form-control" value="@Model.AppUser.Id" type="hidden" />
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Call.CallTime" class="control-label"></label>
+                    <input asp-for="Call.CallTime" class="form-control" />
+                    <span asp-validation-for="Call.CallTime" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Call.CallTypeId">Call Type</label>
+                    <div class="row">
+                        <select id="ddlCallTypes" asp-for="Call.CallTypeId" name="Call.CallTypeId" asp-items="ViewBag.CallTypes" class="form-control pb-1" style="width:100%">
+                            <option value="">--  Select Call Type  --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Call.CallTypeId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 form-check">
+                    <label class="control-label"> Is Customer</label>
+                    <input class="form-check-input m-5 checkbox-xl" asp-for="Call.ContectIsCustomer" id="IsCustomer" />
+                </div>
+                <div class="form-group col-md-8 customer">
+                    <label asp-for="Call.CustomerId">Customer</label>
+                    <div class="row">
+                        <select id="ddlCustomers" asp-for="Call.CustomerId" name="Call.CustomerId" asp-items="ViewBag.Customers" class="form-control pb-1" style="width:100%">
+                            <option value="">--  Select Customer  --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Call.CustomerId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 noncustomer">
+                    <label asp-for="Call.MobileNumber" class="control-label"></label>
+                    <input asp-for="Call.MobileNumber" class="form-control" />
+                    <span asp-validation-for="Call.MobileNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 noncustomer">
+                    <label asp-for="Call.ContactCategory" class="control-label"></label>
+                    <select id="ddlContactCategorys" asp-for="Call.ContactCategory" class="form-control" style="width:100%">
+                        <option value="">-- select Contact Category --</option>
+                        <option value="Individual">Individual</option>
+                        <option value="Company">Company</option>
+                    </select>
+                    <span asp-validation-for="Call.ContactCategory" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 noncustomer">
+                    <label asp-for="Call.ContactType" class="control-label"></label>
+                    <select id="ddlContactTypes" asp-for="Call.ContactType" class="form-control" style="width:100%">
+                        <option value="">-- select Contact Type --</option>
+                        <option value="Farm">Farm</option>
+                        <option value="Agrovet">Agrovet</option>
+                        <option value="Vet">Vet</option>
+                    </select>
+                    <span asp-validation-for="Call.ContactType" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 noncustomer">
+                    <label asp-for="Call.NonCustomerContactName" class="control-label"></label>
+                    <input asp-for="Call.NonCustomerContactName" class="form-control" />
+                    <span asp-validation-for="Call.NonCustomerContactName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-8 noncustomer">
+                    <label asp-for="Call.NonCustomerTownId">Town</label>
+                    <div class="row">
+                        <select id="ddlTowns" asp-for="Call.NonCustomerTownId" name="Call.NonCustomerTownId" asp-items="ViewBag.Towns" class="form-control pb-1" style="width:100%">
+                            <option value="">--  Select Town  --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Call.NonCustomerTownId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Call.Subject" class="control-label"></label>
+                    <input asp-for="Call.Subject" class="form-control" />
+                    <span asp-validation-for="Call.Subject" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Call.Remarks" class="control-label"></label>
+                    <input asp-for="Call.Remarks" class="form-control" />
+                    <span asp-validation-for="Call.Remarks" class="text-danger"></span>
+                </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Calls">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlTowns").select2();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlCustomers").select2();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlCallTypes").select2();
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlTowns", function () {
+            $("input[name=NonCustomerTownId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlCustomers", function () {
+            $("input[name=CustomerId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlCallTypes", function () {
+            $("input[name=CallTypeId]").val($(this).find("option:selected").text());
+        });
+    </script>
+
+    <script>
+        $("body").on("change", "#IsCustomer", function () {
+            var iscustomer = $(this).is(":checked");
+            if (iscustomer == true) {
+                $(".noncustomer").hide();
+                $(".customer").show();
+            } else {
+                $(".noncustomer").show();
+                $(".customer").hide();
+            }
+        });
+    </script>

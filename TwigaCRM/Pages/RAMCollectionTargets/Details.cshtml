@@ -1,0 +1,328 @@
+﻿@page
+@model TwigaCRM.Pages.RAMCollectionTargets.DetailsModel
+
+@{
+    ViewData["Title"] = "Details - R.A.M Collection Target";
+    bool CanCreate = false;
+    bool CanHRBApprove = false;
+
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "create_RAM_collection_target")
+            {
+                CanCreate = true;
+                break;
+            }
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "approve_RAM_collection_target")
+            {
+                CanHRBApprove = true;
+                break;
+            }
+        }
+    }
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">R.A.M Collections Target Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>R.A.M Name:</label>
+                            @Model.RAMCollectionTarget.RAM.FirstName @Model.RAMCollectionTarget.RAM.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.RAMCollectionTarget.RAM.PhoneNumber
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.RAMCollectionTarget.RAM.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Region & Town: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <span>@Model.RAMCollectionTarget.RAM.Town.Region.Name</span> - <span>@Model.RAMCollectionTarget.RAM.Town.Name</span>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Financial Year: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <span>@Model.RAMCollectionTarget.FinancialYear.StartDate.Year</span> - <span>@Model.RAMCollectionTarget.FinancialYear.EndDate.Year</span>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Month: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            @switch (@Model.RAMCollectionTarget.Month)
+                            {
+                                case 1:
+                                    <span>JAN</span>
+                                    ;
+                                    break;
+                                case 2:
+                                    <span>FEB</span>
+                                    ;
+                                    break;
+                                case 3:
+                                    <span>MAR</span>
+                                    ;
+                                    break;
+                                case 4:
+                                    <span>APR</span>
+                                    ;
+                                    break;
+                                case 5:
+                                    <span>MAY</span>
+                                    ;
+                                    break;
+                                case 6:
+                                    <span>JUN</span>
+                                    ;
+                                    break;
+                                case 7:
+                                    <span>JUL</span>
+                                    ;
+                                    break;
+                                case 8:
+                                    <span>AUG</span>
+                                    ;
+                                    break;
+                                case 9:
+                                    <span>SEP</span>
+                                    ;
+                                    break;
+                                case 10:
+                                    <span>OCT</span>
+                                    ;
+                                    break;
+                                case 11:
+                                    <span>NOV</span>
+                                    ;
+                                    break;
+                                case 12:
+                                    <span>DEC</span>
+                                    ;
+                                    break;
+                            }
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-4 row">
+                    <div class="col-md-6 ">
+                        <label>Approval Status:</label>
+                    </div>
+                    <div class="col-md-6  text-primary">
+                        <p>@Model.RAMCollectionTarget.ApprovalStatus</p>
+                    </div>
+                    <hr />
+                    @if (Model.RAMCollectionTarget.IsSubmitted == false && CanCreate)
+                    {
+                        <div>
+                            <a asp-page="./Submit" asp-route-id="@Model.RAMCollectionTarget.Id" class="btn btn-primary rounded">Submit Collection Target</a>
+                        </div>
+                    }
+                    else if (Model.RAMCollectionTarget.IsSubmitted == true && CanCreate)
+                    {
+                        <div>
+                            <a disabled class="btn btn-secondary rounded">Submit Collection Target</a>
+                        </div>
+                    }
+                    <hr />
+                    @if (CanHRBApprove && Model.RAMCollectionTarget.IsSubmitted)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="ApprovalStatus" class="control-label">Collection Target Approval Status</label>
+                                <select asp-for="ApprovalStatus" class="form-control">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="Approve" asp-route-id="@Model.RAMCollectionTarget.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="col-md-2"></div>
+                <div class="col-md-8 row">
+                    <div class="row col-12">
+                        <label for="remarks_history" class="col-12">Remarks History:</label>
+
+                        <textarea disabled asp-for=@Model.RAMCollectionTarget.Remarks class="col-12" rows="6"> </textarea>
+                    </div>
+                    <form method="post" class="col-md-12">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Remarks" class="control-label">Add Remarks</label>
+                            <input asp-for="Remarks" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" asp-page-handler="AddRemarks" asp-route-id="@Model.RAMCollectionTarget.Id" class="btn btn-primary" id="Add">Add Remarks</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Targets</h3>
+                            <span class="col-md-3">
+
+                                @if (Model.RAMCollectionTarget.IsSubmitted == false)
+                                {
+                                    <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add Target</a>
+                                }
+                                else
+                                {
+                                    <a disabled class="btn btn-secondary">Add Target</a>
+                                }
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMCollectionTargetMappings[0].MainDistributor)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMCollectionTargetMappings[0].ExpectedCollection)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RAMCollectionTargetMappings[0].UpdateAt)
+                                    </th>
+                                    <th>
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.RAMCollectionTargetMappings)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MainDistributor.SiteName)
+                                        </td>
+                                        <td>
+                                            @* @Html.DisplayFor(modelItem => item.Volume)*@
+                                            @String.Format("{0:#,##0.00}", item.ExpectedCollection)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.UpdateAt)
+                                        </td>
+                                        <td class="row">
+                                            @if (Model.RAMCollectionTarget.IsSubmitted)
+                                            {
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-5"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-page="../RAMCollectionTargetMappings/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <span>|</span>
+                                                <a asp-page="../RAMCollectionTargetMappings/Delete" asp-route-id="@item.Id" asp-route-RAMsaleTargetId="@Model.RAMCollectionTarget.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./RAMCollectionTargets">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*New Target modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Target</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="RAMCollectionTargetMapping.RAMCollectionTargetId" value="@Model.RAMCollectionTargetId" class="form-control" hidden />
+                        <div class="form-group col-md-12">
+                            <label asp-for="RAMCollectionTargetMapping.MainDistributorId">Main Distributor</label>
+                            <div class="row">
+                                <select id="ddlMainDistributors" asp-for="RAMCollectionTargetMapping.MainDistributorId" name="RAMCollectionTargetMapping.MainDistributorId" asp-items="ViewBag.MainDistributors" class="form-control" style="width: 100%">
+                                    <option value="">--  Select MainDistributor  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="RAMCollectionTargetMapping.MainDistributorId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RAMCollectionTargetMapping.ExpectedCollection" class="control-label"></label>
+                            <input asp-for="RAMCollectionTargetMapping.ExpectedCollection" class="form-control" />
+                            <span asp-validation-for="RAMCollectionTargetMapping.ExpectedCollection" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlMainDistributors").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlMainDistributors", function () {
+            $("input[name=MainDistributorId]").val($(this).find("option:selected").text());
+        });
+    </script>

@@ -1,0 +1,80 @@
+﻿@page
+@model TwigaCRM.Pages.RequestedProducts.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>RequestedProduct</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="RequestedProduct.Id" />
+            <div class="form-group">
+                <label asp-for="RequestedProduct.CampaignId" class="control-label"></label>
+                <select asp-for="RequestedProduct.CampaignId" class="form-control" asp-items="ViewBag.CampaignId"></select>
+                <span asp-validation-for="RequestedProduct.CampaignId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.ProductId" class="control-label"></label>
+                <select asp-for="RequestedProduct.ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+                <span asp-validation-for="RequestedProduct.ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.CurrentMovement" class="control-label"></label>
+                <input asp-for="RequestedProduct.CurrentMovement" class="form-control" />
+                <span asp-validation-for="RequestedProduct.CurrentMovement" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.CurrentMovementValue" class="control-label"></label>
+                <input asp-for="RequestedProduct.CurrentMovementValue" class="form-control" />
+                <span asp-validation-for="RequestedProduct.CurrentMovementValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.ProjectedMovement" class="control-label"></label>
+                <input asp-for="RequestedProduct.ProjectedMovement" class="form-control" />
+                <span asp-validation-for="RequestedProduct.ProjectedMovement" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.ProjectedMovementValue" class="control-label"></label>
+                <input asp-for="RequestedProduct.ProjectedMovementValue" class="form-control" />
+                <span asp-validation-for="RequestedProduct.ProjectedMovementValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.ImportantObservation" class="control-label"></label>
+                <input asp-for="RequestedProduct.ImportantObservation" class="form-control" />
+                <span asp-validation-for="RequestedProduct.ImportantObservation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.FollowUpAction" class="control-label"></label>
+                <input asp-for="RequestedProduct.FollowUpAction" class="form-control" />
+                <span asp-validation-for="RequestedProduct.FollowUpAction" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.CreateAt" class="control-label"></label>
+                <input asp-for="RequestedProduct.CreateAt" class="form-control" />
+                <span asp-validation-for="RequestedProduct.CreateAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedProduct.UpdateAt" class="control-label"></label>
+                <input asp-for="RequestedProduct.UpdateAt" class="form-control" />
+                <span asp-validation-for="RequestedProduct.UpdateAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

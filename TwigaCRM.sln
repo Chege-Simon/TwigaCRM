@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwigaCRM", "TwigaCRM\TwigaCRM.csproj", "{D6087039-6456-4292-806F-0AE157955276}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{77EC4289-819B-49E5-9DB9-73262B7C4E2E}"
+	ProjectSection(SolutionItems) = preProject
+		..\Grant.sql = ..\Grant.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6087039-6456-4292-806F-0AE157955276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6087039-6456-4292-806F-0AE157955276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6087039-6456-4292-806F-0AE157955276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6087039-6456-4292-806F-0AE157955276}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {321F9D7A-2F15-42FE-83BF-71FE36304FE5}
+	EndGlobalSection
+EndGlobal

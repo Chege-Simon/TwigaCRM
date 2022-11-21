@@ -1,0 +1,318 @@
+﻿@page
+@model TwigaCRM.Pages.PickAndReturnForms.DetailsModel
+
+@{
+    ViewData["Title"] = "P & R Details";
+    bool CanFOAApprove = false;
+    bool CanTLApprove = false;
+
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "foa_approve_pick_and_return_form")
+            {
+                CanFOAApprove = true;
+                break;
+            }
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "tl_approve_pick_and_return_form")
+            {
+                CanTLApprove = true;
+                break;
+            }
+        }
+    }
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Pick And Return Form Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.PickAndReturnForm.VSA.FirstName @Model.PickAndReturnForm.VSA.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.PickAndReturnForm.VSA.PhoneNumber
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.PickAndReturnForm.VSA.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Region: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.PickAndReturnForm.VSA.Town.Region.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Town: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.PickAndReturnForm.VSA.Town.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-4 row">
+
+                    <div class="col-md-6">
+                        <label>F.O.A Approval Status: </label>
+                    </div>
+                    <div class="col-md-6 text-primary">
+                        <p>@Model.PickAndReturnForm.FOAstatus</p>
+                    </div>
+                    <div class="col-md-6 ">
+                        <label>T.L Approval Status:</label>
+                    </div>
+                    <div class="col-md-6  text-primary">
+                        <p>@Model.PickAndReturnForm.TLstatus</p>
+                    </div>
+                    <hr/>
+                    @if (Model.PickAndReturnForm.IsSubmitted == false)
+                    {
+                        <div>
+                            <a asp-page="../PickAndReturnForms/Submit" asp-route-id="@Model.PickAndReturnForm.Id" class="btn btn-primary rounded">Submit P & R</a>
+                        </div>
+                    }else{
+                        <div>
+                            <a disabled class="btn btn-secondary rounded">Submit P & R</a>
+                        </div>
+                    } 
+                    @if (CanFOAApprove && Model.PickAndReturnForm.IsSubmitted)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="FOAstatus" class="control-label col">P & R F.O.A Approval Status</label>
+                                <select asp-for="FOAstatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="FOAApprove" asp-route-id="@Model.PickAndReturnForm.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                    @if (CanTLApprove && Model.PickAndReturnForm.FOAstatus == "Approved" && Model.PickAndReturnForm.IsSubmitted)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="TLstatus" class="control-label col">P & R T.L Approval Status</label>
+                                <select asp-for="TLstatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="TLApprove" asp-route-id="@Model.PickAndReturnForm.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Pick And Return Products</h3>
+                            <span class="col-md-3">
+
+                                @if (Model.PickAndReturnForm.IsSubmitted == false)
+                                {
+                                    <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">Add Product</a>
+                                }
+                                else
+                                {
+                                    <a disabled class="btn btn-secondary">Add Product</a>
+                                }
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].Product)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].Product.Description)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].PickedQuantity) (PSC)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].PickedVolume)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].PickedValue)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].ReturnedQuantity) (PSC)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].ReturnedVolume)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].ReturnedValue)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PickAndReturnProducts[0].UpdateAt)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.PickAndReturnProducts)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Product.Name)
+                                            <span> (</span>
+                                            @Html.DisplayFor(modelItem => item.Product.Code)
+                                            <span>)</span>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Product.Description)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.PickedQuantity)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}", item.PickedVolume)
+                                            @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", item.PickedValue)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ReturnedQuantity)
+                                        </td>
+                                        <td>
+                                            @String.Format("{0:#,##0.00}", item.ReturnedVolume)
+                                            @Html.DisplayFor(modelItem => item.Product.UnitOfMeasure)
+                                        </td>
+                                        <td>
+                                            KSh @String.Format("{0:#,##0.00}", item.ReturnedValue)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.UpdateAt)
+                                        </td>
+                                         <td class="row">
+                                            @if (Model.PickAndReturnForm.IsSubmitted)
+                                            {
+                                                <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-page="../PickAndReturnProducts/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                            }
+                                         </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./DailyMovements">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*New Daily Movement modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Daily Movement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="PickAndReturnProduct.PickAndReturnFormId" value="@Model.PickAndReturnForm.Id" class="form-control" hidden/>
+                        <div class="form-group col-md-12">
+                            <label asp-for="PickAndReturnProduct.ProductId">Product</label>
+                            <div class="row">
+                                <select id="ddlProducts" asp-for="PickAndReturnProduct.ProductId" name="PickAndReturnProduct.ProductId" asp-items="ViewBag.Products" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Products  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="PickAndReturnProduct.ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PickAndReturnProduct.PickedQuantity" class="control-label"></label>
+                            <input asp-for="PickAndReturnProduct.PickedQuantity" class="form-control" />
+                            <span asp-validation-for="PickAndReturnProduct.PickedQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PickAndReturnProduct.ReturnedQuantity" class="control-label"></label>
+                            <input asp-for="PickAndReturnProduct.ReturnedQuantity" class="form-control" />
+                            <span asp-validation-for="PickAndReturnProduct.ReturnedQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlProducts").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+   
+    <script type="text/javascript">
+        $("body").on("change", "#ddlProducts", function () {
+            $("input[name=ProductId]").val($(this).find("option:selected").text());
+        });
+    </script>

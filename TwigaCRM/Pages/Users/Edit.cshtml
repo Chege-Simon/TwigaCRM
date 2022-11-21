@@ -1,0 +1,164 @@
+﻿
+@page
+@model TwigaCRM.Pages.Users.EditModel
+
+@{
+    ViewData["Title"] = "User Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="register-box container w-75">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Edit User</p>
+        </div>
+        <div class="card-body">
+            <form method="post" class="form-row">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group  mb-3 col-md-12">
+                    <label asp-for="Input.Email"></label>
+                    <input asp-for="Input.Email" class="form-control" placeholder="Email" />
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div><div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Input.FirstName"></label>
+                    <input asp-for="Input.FirstName" class="form-control" />
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Input.LastName"></label>
+                    <input asp-for="Input.LastName" class="form-control" />
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Input.PhoneNumber"></label>
+                    <input asp-for="Input.PhoneNumber" class="form-control" />
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Input.Status">Activated</label>
+                    <input asp-for="Input.Status">
+                    <span asp-validation-for="Input.Status" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="Input.AppRoleId">Role</label>
+                    <div class="row">
+                        <select id="ddlAppRoles" asp-for="Input.AppRoleId" name="Input.AppRoleId" asp-items="ViewBag.AppRoles" class="form-control pb-1 col-12">
+                            <option value="">--Select Role--</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Input.AppRoleId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="Input.TownId">Town</label>
+                    <div class="row">
+                        <select id="ddlTowns" asp-for="Input.TownId" name="Input.TownId" asp-items="ViewBag.Towns" class="form-control pb-1 col-12">
+                            <option value="">--  Select Town  --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Input.TownId" class="text-danger"></span>
+                </div>
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    @if (Model.AppUser.Id != "b4280b6a-0613-4cbd-a9e6-f1701e926e73")
+                    {
+                    <div class="col-2">
+                        <button type="submit" asp-route-id="@Model.AppUser.Id" class="btn btn-primary">Action</button>
+                        </div>
+                    }
+                </div>
+
+            </form>
+                <form method="post" class="form-row">
+                    <div class="form-group col-md-12 mb-3">
+                        <label asp-for="PasswordInput.NewPassword">NewPassword</label>
+                        <input asp-for="PasswordInput.NewPassword" class="form-control" placeholder="New Password" />
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                        <span asp-validation-for="PasswordInput.NewPassword" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-12 mb-3">
+                        <input asp-for="PasswordInput.ConfirmPassword" class="form-control" placeholder="Retype password" />
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                        <span asp-validation-for="PasswordInput.ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-12 row">
+                        <div class="col-10">
+                        </div>
+                    <!-- /.col -->
+                    @if (Model.AppUser.Id != "b4280b6a-0613-4cbd-a9e6-f1701e926e73")
+                    {
+                        <div class="col-2">
+                            <button type="submit" asp-page-handler="NewPassword" asp-route-id="@Model.AppUser.Id" class="btn btn-primary">Change</button>
+                        </div>
+                    }
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>
+
+@*@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@*<script>
+    $(document).ready(function() {
+      $("#ddlAppRoles").select2({
+              dropdownParent: $("#InputModal")
+      });
+});
+<script>
+    $(document).ready(function() {
+      $("#ddlTowns").select2({
+              dropdownParent: $("#InputModal")
+      });
+});*@
+<script type="text/javascript">
+    $(function () {
+        $("#ddlAppRoles").select2();
+    });
+    $("body").on("change", "#ddlAppRoles", function () {
+        $("input[name=AppRoleId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlTowns").select2();
+    });
+    $("body").on("change", "#ddlTowns", function () {
+        $("input[name=TownId]").val($(this).find("option:selected").text());
+    });
+</script>

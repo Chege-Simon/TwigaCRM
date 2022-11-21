@@ -1,0 +1,47 @@
+﻿@page
+@model TwigaCRM.Pages.DailyMovementReports.EditModel
+
+@{
+    ViewData["Title"] = "Edit - D.M.R";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit Daily Movement Report</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="DailyMovementReport.Id" />
+            <div class="form-group">
+                <label asp-for="DailyMovementReport.SalesPersonId" class="control-label">Sales Person</label>
+                <input class="form-control" value="@Model.AppUser.Email" disabled />
+                <input asp-for="DailyMovementReport.SalesPersonId" class="form-control" value="@Model.AppUser.Id" hidden />
+            </div>
+            <div class="form-group">
+                <label asp-for="DailyMovementReport.SalesDate" class="control-label">Sales Date</label>
+                <input asp-for="DailyMovementReport.SalesDate" class="form-control" />
+                <span asp-validation-for="DailyMovementReport.SalesDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    </div>
+
+<div>
+    <a asp-page="../DailyMovements/DailyMovements">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

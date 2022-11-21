@@ -1,0 +1,110 @@
+﻿@page
+@model TwigaCRM.Pages.PerformanceReports.RAMSalePerformanceReportsModel
+
+@{
+    ViewData["Title"] = "RAM Sale Performance Reports";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center row">
+            <p class="h2 col-md-12">RAM Sale Performance Report</p>
+            @*<a asp-page="./DemoPrintOut" asp-route-id="@Model.Demo.Id" class="btn btn-success col-md-2">Generate Print Out</a>*@
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <p class="font-weight-bolder h3">RAM Sale Performance Report</p>
+                </div>
+                <div class="col-12">
+                    <form class="form-row" method="post">
+                        <div class="col-md-3 mx-2">
+                            <label asp-for="Input.RAMId">R.A.M</label>
+                            <div class="row">
+                                <select id="ddlRAMs" asp-for="Input.RAMId" name="Input.RAMId" asp-items="ViewBag.RAMs" class="form-control" style="width: 100%">
+                                    <option value="">--  Select RAMs  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.RAMId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-2 mx-2">
+                            <label asp-for="Input.Month" class="control-label"></label>
+                            <select asp-for="Input.Month" class="form-control">
+                                <option value="">-- Select Month --</option>
+                                <option value="1">JAN</option>
+                                <option value="2">FEB</option>
+                                <option value="3">MAR</option>
+                                <option value="4">APR</option>
+                                <option value="5">MAY</option>
+                                <option value="6">JUN</option>
+                                <option value="7">JUL</option>
+                                <option value="8">AUG</option>
+                                <option value="9">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select>
+                            <span asp-validation-for="Input.Month" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-2 mx-2">
+                            <label asp-for="Input.FinancialYearId">Financial Year</label>
+                            <div class="row">
+                                <select id="ddlFinancialYears" asp-for="Input.FinancialYearId" name="Input.FinancialYearId" asp-items="ViewBag.FinancialYears" class="form-control" style="width: 100%">
+                                    <option value="">--  Select FinancialYears  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Input.FinancialYearId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <button type="submit" class="btn btn-primary mb-2">Generate Month Report</button>
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <button type="submit" asp-page-handler="WeeklyPerformance" class="btn btn-primary mb-2">Generate Week Report</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlFinancialYears").select2();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlRAMs").select2();
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlFinancialYears", function () {
+            $("input[name=FinancialYearId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlRAMs", function () {
+            $("input[name=RAMId]").val($(this).find("option:selected").text());
+        });
+    </script>

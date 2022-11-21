@@ -1,0 +1,46 @@
+﻿@page
+@model TwigaCRM.Pages.Roles.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<div class="register-box container w-75">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Edit Role</p>
+        </div>
+        <div class="card-body">
+            <hr />
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="AppRole.Id" />
+                        <div class="form-group">
+                            <label asp-for="AppRole.Title" class="control-label"></label>
+                            <input asp-for="AppRole.Title" class="form-control" />
+                            <span asp-validation-for="AppRole.Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="AppRole.Description" class="control-label"></label>
+                            <input asp-for="AppRole.Description" class="form-control" />
+                            <span asp-validation-for="AppRole.Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    </form>
+                    <div>
+                        <a asp-page="./Roles" class="mr-0">Back to List</a>
+                    </div>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,221 @@
+﻿@page
+@model TwigaCRM.Pages.Demos.IndexModel
+
+@{
+    ViewData["Title"] = "Demos";
+    var AllDemos = @Model.Demos;
+    var DisplayableDemos = @Model.Demos;
+    bool CanViewAllDemos = false;
+    foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "view_all_demos_list")
+            {
+                CanViewAllDemos = true;
+                break;
+            }
+        }
+    }
+    if (CanViewAllDemos)
+    {
+        DisplayableDemos = AllDemos;
+    }else{
+        DisplayableDemos = AllDemos.Where(d => d.SalesPersonId == Model.AppUser.Id).ToList();
+    }
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Demos</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Demo</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].SalesPerson)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].Description)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].StartDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].EndDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].SalesPerson)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].DemoType)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].IsSubmitted)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].FOAstatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].PDstatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Demos[0].UpdateAt)
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in DisplayableDemos)
+                {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SalesPerson.FirstName)
+                        @Html.DisplayFor(modelItem => item.SalesPerson.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SalesPerson.FirstName)
+                        @Html.DisplayFor(modelItem => item.SalesPerson.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DemoType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsSubmitted)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FOAstatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PDstatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UpdateAt)
+                    </td>
+                    <td class="row">
+                        @if (item.IsSubmitted)
+                        {
+                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                            <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                        }
+                        else
+                        {
+                            <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <span>|</span>
+                            <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*New Demo modal*@
+<div class="modal fade" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Demo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Demo.SalesPersonId" class="control-label">Sales Person</label>
+                            <input class="form-control" value="@Model.AppUser.FirstName @Model.AppUser.LastName" disabled />
+                            <input asp-for="Demo.SalesPersonId" class="form-control" value="@Model.AppUser.Id" type="hidden" />
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Demo.Title" class="control-label"></label>
+                            <input asp-for="Demo.Title" class="form-control" />
+                            <span asp-validation-for="Demo.Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Demo.Description" class="control-label"></label>
+                            <input asp-for="Demo.Description" class="form-control" />
+                            <span asp-validation-for="Demo.Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Demo.StartDate" class="control-label"></label>
+                            <input asp-for="Demo.StartDate" class="form-control" />
+                            <span asp-validation-for="Demo.StartDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Demo.EndDate" class="control-label"></label>
+                            <input asp-for="Demo.EndDate" class="form-control" />
+                            <span asp-validation-for="Demo.EndDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Demo.DemoType" class="control-label"></label>
+                            <select asp-for="Demo.DemoType" class="form-control" style="width:100%">
+                                <option value="">-- select Demo Type --</option>
+                                <option value="Method">Method</option>
+                                <option value="Result">Result</option>
+                                <option value="Result & Method">Result & Method</option>
+                            </select>
+                            <span asp-validation-for="Demo.DemoType" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

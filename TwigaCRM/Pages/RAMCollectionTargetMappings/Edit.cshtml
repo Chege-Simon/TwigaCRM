@@ -1,0 +1,73 @@
+﻿@page
+@model TwigaCRM.Pages.RAMCollectionTargetMappings.EditModel
+
+@{
+    ViewData["Title"] = "Edit RAM Target";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Edit RAM Target</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Role</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="RAMCollectionTargetMapping.Id" />
+            <input asp-for="RAMCollectionTargetMapping.RAMCollectionTargetId" type="hidden" />
+            <div class="form-group col-md-12">
+                <label asp-for="RAMCollectionTargetMapping.MainDistributorId">Main Distributor</label>
+                <div class="row">
+                    <select id="ddlMainDistributors" asp-for="RAMCollectionTargetMapping.MainDistributorId" name="RAMCollectionTargetMapping.MainDistributorId" asp-items="ViewBag.MainDistributors" class="form-control" style="width: 100%">
+                        <option value="">--  Select MainDistributor  --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="RAMCollectionTargetMapping.MainDistributorId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RAMCollectionTargetMapping.ExpectedCollection" class="control-label"></label>
+                <input asp-for="RAMCollectionTargetMapping.ExpectedCollection" class="form-control" />
+                <span asp-validation-for="RAMCollectionTargetMapping.ExpectedCollection" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="../RAMCollectionTargets/Details" asp-route-id="@Model.RAMCollectionTargetMapping.RAMCollectionTargetId">Back to List</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#ddlMainDistributors").select2();
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("change", "#ddlMainDistributors", function () {
+        $("input[name=MainDistributorId]").val($(this).find("option:selected").text());
+    });
+</script>

@@ -1,0 +1,337 @@
+﻿@page
+@model TwigaCRM.Pages.Customers.DetailsModel
+
+@{
+    ViewData["Title"] = "Customer Details";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container">
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <p class="h3">Customer Details</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="">
+                        <h5>
+                            @Model.Customer.ContactPersonName
+                        </h5>
+                        <h6 class="text-primary">
+                            @Model.Customer.Email
+                        </h6>
+                        <br /> 
+                        <p class="">TYPE : <span>@Model.Customer.CustomerType</span></p>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <a asp-page="./Edit" asp-route-id="@Model.Customer.Id" class="btn btn-secondary rounded">Edit Customer</a>
+                </div>
+            </div>
+            <br />
+            <div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Details</a>
+                    </li>
+                </ul>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Site Name</label>
+                        </div>
+                        <div class="col-md-9 text-primary">
+                            <p>@Model.Customer.SiteName</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Phone Number</label>
+                        </div>
+                        <div class="col-md-9 text-primary">
+                            <p>@Model.Customer.PhoneNumber</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Location (Region - Town - Zone):</label>
+                        </div>
+                        <div class="col-md-9 text-primary">
+                            @if (Model.Customer.Zone != null && Model.Customer.Town != null)
+                            {
+                                <p>@Model.Customer.Town.Region.Name - @Model.Customer.Town.Name - @Model.Customer.Zone.Name </p>
+                            }
+                            else if (Model.Customer.Zone == null && Model.Customer.Town != null)
+                            {
+                                <p>@Model.Customer.Town.Region.Name - @Model.Customer.Town.Name - </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                @if (Model.Customer.CustomerType == "Main Distributor" || Model.Customer.CustomerType == "Stockist")
+                {
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Business Line</h3>
+                            <span class="col-md-3">
+                                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#AssignBusinessLineModal">Assign Business Line</a>
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                         Description
+                                    </th>
+                                    <th>
+                                        Normalized Name
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var customerBusinessLine in Model.Customer.CustomerBusinessLines)
+                            {
+                                <tr>
+                                    <td>
+                                        @foreach (var businesline in Model.BusinessLines)
+                                        {
+                                            @if (businesline.Id == customerBusinessLine.BusinessLineId)
+                                            {
+                                                @Html.DisplayFor(modelItem => businesline.Description)
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @foreach (var businesline in Model.BusinessLines)
+                                        {
+                                            @if (businesline.Id == customerBusinessLine.BusinessLineId)
+                                            {
+                                                @Html.DisplayFor(modelItem => businesline.NormalizedName)
+                                            }
+                                        }
+                                    </td>
+                                    <td class="row">
+                                        @*<a asp-page="./Edit" asp-route-id="@customerBusinessLine.Id"data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |*@
+                                        <a asp-page="../CustomerBusinessLines/Delete" asp-route-id="@customerBusinessLine.Id" asp-route-customerId="@Model.Customer.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a> 
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                    </div>
+                }
+                else
+                {
+                     <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h3 class="card-title col-md-9">Sector</h3>
+                            <span class="col-md-3">
+                                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#AssignSectorModal">Assign Sector</a>
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                         Description
+                                    </th>
+                                    <th>
+                                        Normalized Name
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var customerSector in Model.Customer.CustomerSectors)
+                            {
+                                <tr>
+                                    <td>
+                                        @foreach (var sector in Model.Sectors)
+                                        {
+                                            @if (sector.Id == customerSector.SectorId)
+                                            {
+                                                @Html.DisplayFor(modelItem => sector.Description)
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @foreach (var sector in Model.Sectors)
+                                        {
+                                            @if (sector.Id == customerSector.SectorId)
+                                            {
+                                                @Html.DisplayFor(modelItem => sector.NormalizedName)
+                                            }
+                                        }
+                                    </td>
+                                    <td class="row">
+                                        @*<a asp-page="./Edit" asp-route-id="@customerSector.Id"data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |*@
+                                        <a asp-page="../CustomerSectors/Delete" asp-route-id="@customerSector.Id" asp-route-customerId="@Model.Customer.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a> 
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                }
+               
+                <div class="col-md-12 row">
+                    <div class="col-10">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-2">
+                        <a class="btn btn-secondary" asp-page="./Customers">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Assign BusinessLine modal*@
+<div class="modal fade" role="dialog" id="AssignBusinessLineModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Business Line</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="CustomerBusinessLine.CustomerId" class="control-label">Sector</label>
+                            <input asp-for="CustomerBusinessLine.CustomerId" class="form-control" value="@Model.Customer.Id" hidden/>
+                            <input type="text" class="form-control" value="@Model.Customer.Email" disabled/>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="CustomerBusinessLine.BusinessLineId">Business Line</label>
+                            <div class="row">
+                                <select id="ddlBusinessLines" asp-for="CustomerBusinessLine.BusinessLineId" name="CustomerBusinessLine.BusinessLineId" asp-items="ViewBag.BusinessLines" class="form-control pb-1 col-12">
+                                    <option value="">--  Select Business Line  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="CustomerBusinessLine.BusinessLineId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AssignBusinessLine" asp-route-id="@Model.Customer.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Assign Sector modal*@
+<div class="modal fade" role="dialog" id="AssignSectorModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Sector</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="CustomerSector.CustomerId" class="control-label">Sector</label>
+                            <input asp-for="CustomerSector.CustomerId" class="form-control" value="@Model.Customer.Id" hidden/>
+                            <input type="text" class="form-control" value="@Model.Customer.Email" disabled/>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="CustomerSector.SectorId">Sector</label>
+                            <div class="row">
+                                <select id="ddlSectors" asp-for="CustomerSector.SectorId" name="CustomerSector.SectorId" asp-items="ViewBag.Sectors" class="form-control pb-1 col-12">
+                                    <option value="">--  Select Sector  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="CustomerSector.SectorId" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AssignSector" asp-route-id="@Model.Customer.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    $(document).ready(function(){
+        $(".dataTable").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false, "orderCellsTop" : true,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+});
+</script>
+<script>
+    $(document).ready(function() {
+      $("#ddlSectors").select2({
+              dropdownParent: $("#AssignSectorModal")
+      });
+});
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlSectors").select2();
+    });
+    $("body").on("change", "#ddlSectors", function () {
+        $("input[name=SectorId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script>
+    $(document).ready(function() {
+      $("#ddlBusinessLines").select2({
+              dropdownParent: $("#AssignBusinessLineModal")
+      });
+});
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#ddlBusinessLines").select2();
+    });
+    $("body").on("change", "#ddlBusinessLines", function () {
+        $("input[name=BusinessLineId]").val($(this).find("option:selected").text());
+    });
+</script>

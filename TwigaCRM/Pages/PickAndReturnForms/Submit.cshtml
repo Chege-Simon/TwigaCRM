@@ -1,0 +1,64 @@
+﻿@page
+@model TwigaCRM.Pages.PickAndReturnForms.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>PickAndReturnForm</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PickAndReturnForm.VSA)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PickAndReturnForm.VSA.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PickAndReturnForm.PickDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PickAndReturnForm.PickDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PickAndReturnForm.IsSubmitted)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PickAndReturnForm.IsSubmitted)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PickAndReturnForm.FOAstatus)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PickAndReturnForm.FOAstatus)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PickAndReturnForm.TLstatus)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PickAndReturnForm.TLstatus)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PickAndReturnForm.CreateAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PickAndReturnForm.CreateAt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PickAndReturnForm.UpdateAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PickAndReturnForm.UpdateAt)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="PickAndReturnForm.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

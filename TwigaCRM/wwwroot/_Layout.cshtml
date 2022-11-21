@@ -1,0 +1,109 @@
+﻿
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<style>
+    body {
+        -webkit-print-color-adjust: exact;
+    }
+</style>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - J.E</title>
+    <partial name="AdminLTE/_Styles" />
+</head>
+<body class="hold-transition sidebar-mini" id="layoutBody">
+    <div class="wrapper">
+
+        <!-- Navbar -->
+        <partial name="AdminLTE/_TopNavigation" />
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <partial name="AdminLTE/_MainNavigation"/>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Main content -->
+            <div class="content">
+                <div class="container-fluid">
+                    <div class="">
+                        @*<br />*@
+                        @*<span>Current Position: J.E</span>@Context.Request.Path*@
+                    </div>
+                    <br />
+                    @RenderBody()
+                </div><!-- /.container-fluid -->
+            </div>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+            <div class="p-3">
+                <h5>Title</h5>
+                <p>Sidebar content</p>
+            </div>
+        </aside>
+        <!-- /.control-sidebar -->
+        <!-- FOOTER -->
+        <partial name="AdminLTE/_Footer" />
+    </div>
+    <!-- ./wrapper -->
+    <!-- SCRIPTS -->
+    <partial name="AdminLTE/_Scripts" />
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await Component.InvokeAsync("Notyf")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+<script>
+    window.addEventListener('load', () => loadDark());
+    var buttonElement = document.getElementById("darkIcon")
+
+    function loadDark() {
+        //default is light mode
+        console.log("dark mode is ", JSON.parse(localStorage.getItem("userDarkMode")))
+        let dark = JSON.parse(localStorage.getItem("userDarkMode"))
+        if (dark === null) {
+            localStorage.setItem("userDarkMode", JSON.stringify(false))
+            buttonElement.classList.add("fa-moon-o")
+            buttonElement.classList.remove("fa-sun-o")
+        }
+        else if (dark === true) {
+            buttonElement.classList.add("fa-sun-o")
+            buttonElement.classList.remove("fa-moon-o")
+            document.getElementById("layoutBody").classList.add("dark-mode")
+        } else {
+            buttonElement.classList.remove("fa-sun-o")
+            buttonElement.classList.add("fa-moon-o")
+        }
+    }
+    document.getElementById("darkIcon").addEventListener("click", toggleDark);
+    function toggleDark() {
+        var element = document.getElementById("layoutBody")
+        let dark = JSON.parse(localStorage.getItem("userDarkMode"))
+        if (dark) {
+            localStorage.setItem("userDarkMode", JSON.stringify(false))
+            console.log("Dark mode off")
+            buttonElement.classList.add("fa-moon-o")
+            buttonElement.classList.remove("fa-sun-o")
+            element.classList.remove("dark-mode")
+            @*buttonElement.classList.toggle("fas")
+            buttonElement.classList.toggle("far")
+            buttonElement.classList.toggle("fa-sun")*@
+        }
+        else {
+            localStorage.setItem("userDarkMode", JSON.stringify(true))
+            console.log("Dark mode on")
+            buttonElement.classList.add("fa-sun-o")
+            buttonElement.classList.remove("fa-moon-o")
+            element.classList.add("dark-mode")
+        }
+        //optional to change fontawesome icon on button
+    }
+</script>

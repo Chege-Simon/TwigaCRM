@@ -1,0 +1,287 @@
+﻿@page
+@model TwigaCRM.Pages.Campaigns.IndexModel
+
+@{
+    ViewData["Title"] = "Campaigns";
+    var AllCampaigns = @Model.Campaigns;
+    var DisplayableCampaigns = @Model.Campaigns;
+    bool CanViewAllCampaigns = false;
+    foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "view_all_campaigns_list")
+            {
+                CanViewAllCampaigns = true;
+                break;
+            }
+        }
+    }
+    if (CanViewAllCampaigns)
+    {
+        DisplayableCampaigns = AllCampaigns;
+    }
+    else
+    {
+        DisplayableCampaigns = AllCampaigns.Where(d => d.SalesPersonId == Model.AppUser.Id).ToList();
+    }
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Campaigns</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Campaign</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Campaigns[0].SalesPerson)
+                    </th>
+                    <th>
+                        Period
+                    </th>
+                    <th>
+                        Farmers
+                    </th>
+                    <th>
+                        Partnering Stockist
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Campaigns[0].IsBudgeted)
+                    </th>
+                    <th>
+                        Submitted
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Campaigns[0].HRMstatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Campaigns[0].FOAstatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Campaigns[0].Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Campaigns[0].UpdateAt)
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in DisplayableCampaigns)
+                {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SalesPerson.FirstName)
+                        <span> </span>
+                        @Html.DisplayFor(modelItem => item.SalesPerson.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                        <span> - </span>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumberOfFarmers)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PartneringStockist.SiteName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CampaignType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsBudgeted)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsSubmitted)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HRMstatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FOAstatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td>
+                    @Html.DisplayFor(modelItem => item.UpdateAt)
+                    </td>
+                    <td class="row">
+                        @if (item.IsSubmitted)
+                        {
+                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Edit" class="col-5"><i class="fa fa-pencil-square-o text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                            <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                        }
+                        else
+                        {
+                        <a asp-page="./Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <span>|</span>
+                        <a asp-page="./Details" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*New Campaign modal*@
+<div class="modal fade" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Campaign</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" class="form-row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Campaign.SalesPersonId" class="control-label">Sales Person</label>
+                            <input class="form-control" value="@Model.AppUser.FirstName @Model.AppUser.LastName" disabled/>
+                            <input asp-for="Campaign.SalesPersonId" class="form-control" value="@Model.AppUser.Id" type="hidden"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Campaign.Title" class="control-label"></label>
+                            <input asp-for="Campaign.Title" class="form-control" />
+                            <span asp-validation-for="Campaign.Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Campaign.Description" class="control-label"></label>
+                            <input asp-for="Campaign.Description" class="form-control" />
+                            <span asp-validation-for="Campaign.Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Campaign.StartDate" class="control-label"></label>
+                            <input asp-for="Campaign.StartDate" class="form-control" />
+                            <span asp-validation-for="Campaign.StartDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Campaign.EndDate" class="control-label"></label>
+                            <input asp-for="Campaign.EndDate" class="form-control" />
+                            <span asp-validation-for="Campaign.EndDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Campaign.NumberOfFarmers" class="control-label"></label>
+                            <input asp-for="Campaign.NumberOfFarmers" class="form-control" />
+                            <span asp-validation-for="Campaign.NumberOfFarmers" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Campaign.PartneringStockistId">Parterning Stockist</label>
+                            <div class="row">
+                                <select id="ddlStockists" asp-for="Campaign.PartneringStockistId" name="Campaign.PartneringStockistId" asp-items="ViewBag.Stockists" class="form-control pb-1" style="width:100%">
+                                    <option value="">--  Select Stockist  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Campaign.PartneringStockistId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Campaign.CampaignType" class="control-label"></label>
+                            <select id="ddlCampaignTypes" asp-for="Campaign.CampaignType" class="form-control" style="width:100%">
+                                <option value="">-- select Campaign Type --</option>
+                                <option value="Promoter">Promoter</option>
+                                <option value="TCI Field Days">TCI Field Days</option>
+                                <option value="Radio Promotion">Radio Promotion</option>
+                                <option value="MD's Bonding Sessions">MD's Bonding Sessions</option>
+                                <option value="Captial Give Aways">Captial Give Aways</option>
+                                <option value="Stockist Training">Stockist Training</option>
+                                <option value="Road Shows">Road Shows</option>
+                                <option value="Storming">Storming</option>
+                                <option value="Stock Market Activation">Stock Market Activation</option>
+                                <option value="AI Technicians Training">AI Technicians Training</option>
+                            </select>
+                            <span asp-validation-for="Campaign.CampaignType" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Campaign.CampaignBudgetId">Budget</label><span class="text-muted">Select if Campaign Is Budged for</span>
+                            <div class="row">
+                                <select id="ddlBudgets" asp-for="Campaign.CampaignBudgetId" name="Campaign.CampaignBudgetId" asp-items="ViewBag.Budgets" class="form-control pb-1" style="width:100%">
+                                    <option value="">--  Select Budget  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Campaign.CampaignBudgetId" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#ddlBudgets").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlCampaignTypes").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlBudgets", function () {
+            $("input[name=CampaignBudgetId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlCampaignTypes", function () {
+            $("input[name=CampaignType]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlStockists").select2({
+                dropdownParent: $("#InputModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlStockists", function () {
+            $("input[name=PartneringStockistId]").val($(this).find("option:selected").text());
+        });
+    </script>

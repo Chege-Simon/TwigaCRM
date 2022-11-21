@@ -1,0 +1,699 @@
+﻿@page
+@model TwigaCRM.Pages.Campaigns.DetailsModel
+
+@{
+    ViewData["Title"] = "Campaign - Details";
+    bool CanFOAApprove = false;
+    bool CanHRMApprove = false;
+    bool CanCreate = false;
+    bool CanChangeStatus = false;
+    bool Closable = false;
+
+    @foreach (var userpermission in Model.AppUser.AppRole.AppRolePermissions)
+    {
+        @foreach (var permission in Model.Permissions)
+        {
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "foa_approve_campaign")
+            {
+                CanFOAApprove = true;
+                break;
+            }
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "hrm_approve_campaign")
+            {
+                CanHRMApprove = true;
+                break;
+            }
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "create_campaign")
+            {
+                CanCreate = true;
+                break;
+            }
+            @if (permission.Id == userpermission.PermissionId && permission.Name == "change_campaign_status")
+            {
+                CanChangeStatus = true;
+                break;
+            }
+        }
+    }
+   
+    @foreach(var product in Model.RequestedProducts){
+            @if (product.ImportantObservation != null && product.FollowUpAction != null && product.ActualMovement > 0)
+            {
+                Closable = true;
+            }
+    }
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card card-outline card-primary ">
+        <div class="card-header text-center row">
+            <p class="h2 col-md-9">Campaign Details</p>
+            @if( Model.Campaign.HRMstatus == "Approved" && Model.Campaign.FOAstatus == "Approved" && Model.Campaign.IsSubmitted && Model.Campaign.Status == "Open" && Model.Campaign.SalesPersonId == Model.AppUser.Id){
+                <a asp-page="./CampaignPrintOut" asp-route-id="@Model.Campaign.Id" class="btn btn-success col-md-2">Generate Print Out</a> 
+            }
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <h5 class="col-md-12">
+                            <label>Sales Person Name:</label>
+                            @Model.Campaign.SalesPerson.FirstName @Model.Campaign.SalesPerson.LastName
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Campaign.SalesPerson.PhoneNumber
+                        </h6>
+                        <h5 class="col-md-12">
+                            <label>Campaign Title:</label>
+                            @Model.Campaign.Title
+                        </h5>
+                        <h6 class="text-primary col-md-12">
+                            @Model.Campaign.Description
+                        </h6>
+                        <hr />
+                        <p class="col-md-12">ROLE : <span>@Model.Campaign.SalesPerson.AppRole.Title</span></p>
+                        <div class="col-md-3">
+                            <label>Town & Region: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Campaign.SalesPerson.Town.Name - @Model.Campaign.SalesPerson.Town.Region.Name</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Budget: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            @if (Model.Campaign.CampaignBudget != null)
+                            {
+                                <p>@Model.Campaign.CampaignBudget.Description: @Model.Campaign.CampaignBudget.FinancialYear.StartDate.Year - @Model.Campaign.CampaignBudget.FinancialYear.EndDate.Year</p>
+                            }
+                        </div>
+                        <div class="col-md-6"></div><div class="col-md-3">
+                            <label>Campaign Type: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Campaign.CampaignType</p>
+                        </div>
+                        <div class="col-md-6"></div><div class="col-md-3">
+                            <label>Number Of Farmers: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            <p>@Model.Campaign.NumberOfFarmers</p>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <label>Partnering Stockist: </label>
+                        </div>
+                        <div class="col-md-3 text-primary">
+                            @if (Model.Campaign.PartneringStockist != null)
+                            {
+                                <p>@Model.Campaign.PartneringStockist.SiteName</p>
+                             }
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+                <div class="col-md-6 row">
+                    <div class="col-3"></div>
+                    <div class="col-9 row">
+                        <div class="col-md-7">
+                            <label>F.O.A Approval Status: </label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Campaign.FOAstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>H.R.M Approval Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Campaign.HRMstatus</p>
+                        </div>
+                        <div class="col-md-7 ">
+                            <label>Campaign Status:</label>
+                        </div>
+                        <div class="col-md-5 text-primary">
+                            <p>@Model.Campaign.Status</p>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+                    @if (Model.Campaign.IsSubmitted == false && CanCreate)
+                    {
+                        <div>
+                            <a asp-page="./Submit" asp-route-id="@Model.Campaign.Id" class="btn btn-primary rounded">Submit Campaign</a>
+                        </div>
+                    }else if (Model.Campaign.IsSubmitted == true && CanCreate && Model.Campaign.Status != "Closed"){
+                        <div>
+                            <a disabled class="btn btn-secondary rounded">Submit Campaign</a>
+                        </div>
+                    }
+                    <hr/>
+                    @if (CanFOAApprove && Model.Campaign.IsSubmitted && Model.Campaign.Status != "Closed")
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="FOAstatus" class="control-label col">Campaign F.O.A Approval Status</label>
+                                <select asp-for="FOAstatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="FOAApprove" asp-route-id="@Model.Campaign.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                    @if (CanHRMApprove && Model.Campaign.IsSubmitted && Model.Campaign.FOAstatus == "Approved" && Model.Campaign.Status != "Closed")
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="HRMstatus" class="control-label col">Campaign H.R.M Approval Status</label>
+                                <select asp-for="HRMstatus" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Approved">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="HRMApprove" asp-route-id="@Model.Campaign.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                    @if (CanChangeStatus && Model.Campaign.HRMstatus == "Approved" && Model.Campaign.FOAstatus == "Approved" && Closable)
+                    {
+                        <form method="post" class="col-md-12 border p-2">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group form-row">
+                                <label asp-for="Status" class="control-label col">Campaign Status</label>
+                                <select asp-for="Status" class="form-control col">
+                                    <option value="">-- select Status --</option>
+                                    <option value="Closed">Close</option>
+                                    <option value="Opened">Open</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" asp-page-handler="CampaignStatus" asp-route-id="@Model.Campaign.Id" class="btn btn-primary" id="submit">Action</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+                 <div class="col-md-2"></div>
+                <div class="col-md-8 row">
+                    <div class="row col-12">
+                        <label for="remarks_history" class="col-12">Remarks History:</label>
+
+                        <textarea disabled asp-for=@Model.Campaign.Remarks class="col-12" rows="6"> </textarea>
+                    </div>
+                    <form method="post" class="col-md-12">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Remarks" class="control-label">Add Remarks</label>
+                            <input asp-for="Remarks" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" asp-page-handler="AddRemarks" asp-route-id="@Model.Campaign.Id" class="btn btn-primary" id="Add">Add Remarks</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <br />
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header row">
+                            <h1 class="card-title col-md-9 font-weight-bolder">Campaign Products</h1>
+                            <span class="col-md-3">
+                            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#AddProductModal">Add Product</a>
+                            </span>
+                        </div>
+                        <table class="table table-bordered table-striped dataTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].Product)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].CurrentMovement)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].CurrentMovementValue)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].ProjectedMovement)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].ProjectedMovementValue)
+                                    </th>
+                                    <th>
+                                        Approved
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].ActualMovement)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].ImportantObservation)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RequestedProducts[0].FollowUpAction)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        @foreach (var item in Model.RequestedProducts) {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Name) 
+                                        <span>(</span>
+                                        @Html.DisplayFor(modelItem => item.Product.Code) 
+                                        <span>)</span>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CurrentMovement)
+                                    </td>
+                                    <td>
+                                        KSh @String.Format("{0:#,##0.00}", item.CurrentMovementValue)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ProjectedMovement)
+                                    </td>
+                                    <td>
+                                        KSh @String.Format("{0:#,##0.00}", item.ProjectedMovementValue)
+                                    </td>
+                                    <td class="text-success">
+                                        @if (item.IsFOAApproved)
+                                        {
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ActualMovement)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ImportantObservation)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FollowUpAction)
+                                    </td>
+                                    <td class="row">
+                                        @if (Model.Campaign.IsSubmitted && Model.Campaign.FOAstatus != "Approved" && CanFOAApprove )
+                                        {                                           
+                                            <a asp-page="../RequestedProducts/Edit" asp-route-id="@item.Id" asp-route-campaignId="@item.Campaign.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-3"><i class="fa fa-check" aria-hidden="true"></i></a> <span>|</span>                                     
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                        }
+                                        else if (Model.Campaign.IsSubmitted && Model.Campaign.HRMstatus != "Approved" && CanHRMApprove )
+                                        {                                           
+                                            <a asp-page="../RequestedProducts/Edit" asp-route-id="@item.Id" asp-route-campaignId="@item.Campaign.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-3"><i class="fa fa-check" aria-hidden="true"></i></a> <span>|</span>                                     
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                        }
+                                        else if (Model.Campaign.IsSubmitted && CanCreate)
+                                        {                                               
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-3"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>                                 
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-3"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>                                 
+                                            <a asp-page="../RequestedProducts/Delete" asp-route-id="@item.Id" asp-route-campaignId="@Model.Campaign.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-3"><i class="fa fa-times text-danger" aria-hidden="true"></i></a>
+                                        }
+                                        @if (Model.Campaign.HRMstatus == "Approved" && CanCreate)
+                                        {
+                                             <span>|</span><a asp-page="../RequestedProducts/Report" asp-route-id="@item.Id" asp-route-campaignId="@item.Campaign.Id" data-toggle="tooltip" data-placement="top" title="Report" class="col-3"><i class="fa fa-file-text" aria-hidden="true"></i></a> 
+                                        }else{
+                                            <span>|</span>
+
+                                            <a disabled data-toggle="tooltip" data-placement="top" title="Can't Report" class="col-3"><i class="fa fa-file-text text-secondary" aria-hidden="true"></i></a>
+                                        }
+                                    </td>
+                                </tr>
+                        }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @if(Model.Campaign.CampaignBudget != null){
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header row">
+                                <h2 class="card-title col-md-9 font-weight-bolder">Campaign Materials</h2>
+                                <span class="col-md-3">
+                                        <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#AddCampaignItemModal">Add Material</a>
+                                </span>
+                            </div>
+                            <table class="table table-bordered table-striped dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Name
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.RequestedCampaignItems[0].RequestedQuantity)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.RequestedCampaignItems[0].RequestedPrice)
+                                            </th>
+                                            <th>
+                                                Approved Quantity
+                                            </th>
+                                            <th>
+                                                Approved Price
+                                            </th>
+                                            <th>
+                                                Approved
+                                            </th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.RequestedCampaignItems)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.CampaignItem.Name)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.RequestedQuantity)
+                                                </td>
+                                                <td>
+                                                    KSh @String.Format("{0:#,##0.00}", item.RequestedPrice)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.FOAApprovedQuantity)
+                                                </td>
+                                                <td>
+                                                    KSh @String.Format("{0:#,##0.00}", item.FOAApprovedPrice)
+                                                </td>
+                                                <td class="text-success">
+                                                    @if (item.IsFOAApproved)
+                                                    {
+                                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                                    }
+                                                </td>
+                                                <td class="row">
+                                                @if (Model.Campaign.IsSubmitted && Model.Campaign.FOAstatus != "Approved" && CanFOAApprove )
+                                                    {                                           
+                                                        <a asp-page="../RequestedCampaignItems/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-5"><i class="fa fa-check" aria-hidden="true"></i></a> <span>|</span>                                     
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-5"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                                    }
+                                                    else if (Model.Campaign.IsSubmitted && Model.Campaign.HRMstatus != "Approved" && CanHRMApprove )
+                                                    {                                           
+                                                        <a asp-page="../RequestedCampaignItems/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-5"><i class="fa fa-check" aria-hidden="true"></i></a> <span>|</span>                                     
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-5"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                                    }
+                                                    else if (Model.Campaign.IsSubmitted && CanCreate)
+                                                    {                                               
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-5"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>                                 
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-5"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-5"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>                                 
+                                                        <a asp-page="../RequestedCampaignItems/Delete" asp-route-id="@item.Id" asp-route-campaignId="@Model.Campaign.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-5"><i class="fa fa-times text-danger" aria-hidden="true"></i></a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header row">
+                                <h2 class="card-title col-md-9 font-weight-bolder">Campaign Expenses</h2>
+                                <span class="col-md-3">
+                                    <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#AddExpenseModal">Add Expense</a>
+                                </span>
+                            </div>
+                            <table class="table table-bordered table-striped dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.RequestedExpenses[0].ExpenseCategory)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.RequestedExpenses[0].RequestedAmount)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.RequestedExpenses[0].ApprovedAmount)
+                                        </th>
+                                        <th>
+                                            Approved
+                                        </th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.RequestedExpenses)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ExpenseCategory.Name)
+                                            </td>
+                                            <td>
+                                                KSh @String.Format("{0:#,##0.00}", item.RequestedAmount)
+                                            </td>
+                                            <td>
+                                               KSh @String.Format("{0:#,##0.00}", item.ApprovedAmount)
+                                            </td>
+                                            <td class="text-success">
+                                                @if (item.IsFOAApproved)
+                                                {
+                                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                                }
+                                            </td>
+                                            <td class="row">
+                                                @if (Model.Campaign.IsSubmitted && Model.Campaign.FOAstatus != "Approved" && CanFOAApprove )
+                                                    {                                           
+                                                        <a asp-page="../RequestedExpenses/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-3"><i class="fa fa-check" aria-hidden="true"></i></a> <span>|</span>
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a><span>|</span>
+                                                    }
+                                                    else if (Model.Campaign.IsSubmitted && Model.Campaign.HRMstatus != "Approved" && CanHRMApprove )
+                                                    {                                           
+                                                        <a asp-page="../RequestedExpenses/Edit" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Approve" class="col-3"><i class="fa fa-check" aria-hidden="true"></i></a> <span>|</span>                                     
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a><span>|</span>
+                                                    }
+                                                    else if (Model.Campaign.IsSubmitted && CanCreate)
+                                                    {                                               
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-3"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>                                 
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Remove" class="col-3"><i class="fa fa-times text-secondary" aria-hidden="true"></i></a><span>|</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Approve" class="col-3"><i class="fa fa-check text-secondary" aria-hidden="true"></i></a> <span>|</span>
+                                                        <a asp-page="../RequestedExpenses/Delete" asp-route-id="@item.Id" asp-route-campaignId="@Model.Campaign.Id" data-toggle="tooltip" data-placement="top" title="Remove" class="col-3"><i class="fa fa-times text-danger" aria-hidden="true"></i></a> <span>|</span>
+                                                    }
+                                                    @if(Model.Campaign.IsSubmitted && Model.Campaign.HRMstatus == "Approved" && Model.Campaign.FOAstatus == "Approved"){
+                                                        <a asp-page="../ExpenseReceipts/ExpenseReceipts" asp-route-id="@item.Id" asp-route-campaignId="@item.Campaign.Id" data-toggle="tooltip" data-placement="top" title="Upload Expense Receipts" class="col-3"><i class="fa fa-upload" aria-hidden="true"></i></a>                                   
+                                                    }else{                                           
+                                                        <a disabled data-toggle="tooltip" data-placement="top" title="Can't Upload Expense Receipts" class="col-3 text-secondary"><i class="fa fa-upload" aria-hidden="true"></i></a>
+                                                    }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+        <div class="col-md-12 row">
+            <div class="col-10">
+            </div>
+            <!-- /.col -->
+            <div class="col-2">
+                <a class="btn btn-secondary" asp-page="./Campaigns">Back</a>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+@*New Products modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="AddProductModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Products</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="RequestedProduct.CampaignId" value="@Model.Campaign.Id" class="form-control" hidden />
+                        <div class="form-group col-md-12">
+                            <label asp-for="RequestedProduct.ProductId">Product</label>
+                            <div class="row">
+                                <select id="ddlProducts" asp-for="RequestedProduct.ProductId" name="RequestedProduct.ProductId" asp-items="ViewBag.Products" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Product  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="RequestedProduct.ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RequestedProduct.CurrentMovement" class="control-label"></label>
+                            <input asp-for="RequestedProduct.CurrentMovement" class="form-control" />
+                            <span asp-validation-for="RequestedProduct.CurrentMovement" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RequestedProduct.ProjectedMovement" class="control-label"></label>
+                            <input asp-for="RequestedProduct.ProjectedMovement" class="form-control" />
+                            <span asp-validation-for="RequestedProduct.ProjectedMovement" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AddProduct" asp-route-id="@Model.Campaign.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*New CampaignItems modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="AddCampaignItemModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Campaign Items</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="RequestedCampaignItem.CampaignId" value="@Model.Campaign.Id" class="form-control" hidden />
+                        <div class="form-group col-md-12">
+                            <label asp-for="RequestedCampaignItem.CampaignItemId">Item</label>
+                            <div class="row">
+                                <select id="ddlItems" asp-for="RequestedCampaignItem.CampaignItemId" name="RequestedCampaignItem.CampaignItemId" asp-items="ViewBag.Items" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Item  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="RequestedCampaignItem.CampaignItemId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RequestedCampaignItem.RequestedQuantity" class="control-label"></label>
+                            <input asp-for="RequestedCampaignItem.RequestedQuantity" class="form-control" />
+                            <span asp-validation-for="RequestedCampaignItem.RequestedQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AddCampaignItem" asp-route-id="@Model.Campaign.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*New Campaign Expense modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="AddExpenseModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Campaign Expense</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="RequestedExpense.CampaignId" value="@Model.Campaign.Id" class="form-control" hidden />
+                        <div class="form-group col-md-12">
+                            <label asp-for="RequestedExpense.ExpenseCategoryId">Expense Category</label>
+                            <div class="row">
+                                <select id="ddlExpenses" asp-for="RequestedExpense.ExpenseCategoryId" name="RequestedExpense.ExpenseCategoryId" asp-items="ViewBag.Expenses" class="form-control" style="width: 100%">
+                                    <option value="">--  Select Expense  --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="RequestedExpense.ExpenseCategoryId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RequestedExpense.RequestedAmount" class="control-label">Requested Amount</label>
+                            <input asp-for="RequestedExpense.RequestedAmount" class="form-control" />
+                            <span asp-validation-for="RequestedExpense.RequestedAmount" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="AddExpense" asp-route-id="@Model.Campaign.Id" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+    <script>
+        $(document).ready(function () {
+            $(".dataTable").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false, "orderCellsTop": true,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlProducts").select2({
+                dropdownParent: $("#AddProductModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlProducts", function () {
+            $("input[name=ProductId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlItems").select2({
+                dropdownParent: $("#AddCampaignItemModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlItems", function () {
+        $("input[name=CampaignItemId]").val($(this).find("option:selected").text());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#ddlExpenses").select2({
+                dropdownParent: $("#AddExpenseModal")
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $("body").on("change", "#ddlExpenses", function () {
+            $("input[name=ExpenseCategoryId]").val($(this).find("option:selected").text());
+        });
+    </script>

@@ -1,0 +1,81 @@
+﻿@page
+@model TwigaCRM.Pages.AuditTrail.IndexModel
+
+@{
+    ViewData["Title"] = "Audit Trail";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h3>Audit Trail</h3>
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-10">Audit Trail</h3>
+        <span class="col-md-2">
+            @*<a class="btn btn-success" asp-page="Create">Create New</a>*@
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-responsive" id="dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Audit[0].UserId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Audit[0].Type)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Audit[0].TableName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Audit[0].DateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Audit[0].OldValues)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Audit[0].NewValues)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Audit[0].AffectedColumns)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Audit[0].PrimaryKey)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Audit)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Type)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TableName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DateTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OldValues)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NewValues)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AffectedColumns)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PrimaryKey)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

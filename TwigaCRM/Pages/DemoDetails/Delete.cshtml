@@ -1,0 +1,106 @@
+﻿@page
+@model TwigaCRM.Pages.DemoDetails.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>DemoDetail</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.Demo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.Demo.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.CropAndAnimalId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.CropAndAnimalId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.PestAndDiseaseId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.PestAndDiseaseId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.RequestedQuantityOfSample)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.RequestedQuantityOfSample)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.RequestedNumberOfDemos)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.RequestedNumberOfDemos)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.ApprovedQuantityOfSample)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.ApprovedQuantityOfSample)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.ApprovedNumberOfDemos)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.ApprovedNumberOfDemos)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.Product)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.Product.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.CompetingProduct)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.CompetingProduct.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.Remarks)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.Remarks)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.IsFOAApproved)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.IsFOAApproved)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.IsPDApproved)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.IsPDApproved)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.CreateAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.CreateAt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DemoDetail.UpdateAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DemoDetail.UpdateAt)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="DemoDetail.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

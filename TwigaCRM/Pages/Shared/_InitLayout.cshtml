@@ -1,0 +1,31 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - C.R.M</title>
+    <partial name="AdminLTE/_Styles" />
+</head>
+<body class="hold-transition login-page">
+
+    <div class="">
+        @RenderBody()
+    </div>
+
+    <footer class="main-footer">
+        <!-- To the right -->
+        <div class="float-right d-none d-sm-inline">
+            DevKim
+        </div>
+        <!-- Default to the left -->
+        <strong>Copyright &copy; -@DateTime.Now.Year <a href="https://twigachemicals.com/">Twiga-C.R.M</a>.</strong> All rights reserved.
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await Component.InvokeAsync("Notyf")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

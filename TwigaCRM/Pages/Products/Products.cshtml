@@ -1,0 +1,648 @@
+﻿@page
+@model TwigaCRM.Pages.Products.IndexModel
+
+@{
+    ViewData["Title"] = "Products";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<style>
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<nav class="container-fluid">
+  <div class="nav nav-tabs row" id="nav-tab" role="tablist">
+    <button class="nav-link col-2 font-weight-bold h2 active" id="nav-animalhealth-tab" data-toggle="tab" data-target="#nav-animalhealth" type="button" role="tab" aria-controls="nav-animalhealth" aria-selected="true">Animal Health</button>
+    <button class="nav-link col-3 font-weight-bold h2" id="nav-cropprotection-tab" data-toggle="tab" data-target="#nav-cropprotection" type="button" role="tab" aria-controls="nav-cropprotection" aria-selected="false">Crop Protection</button>
+    <button class="nav-link col-2 font-weight-bold h2" id="nav-explosives-tab" data-toggle="tab" data-target="#nav-explosives" type="button" role="tab" aria-controls="nav-explosives" aria-selected="true">Explosives</button>
+    <button class="nav-link col-2 font-weight-bold h2" id="nav-consumer-tab" data-toggle="tab" data-target="#nav-consumer" type="button" role="tab" aria-controls="nav-consumer" aria-selected="true">Consumer</button>
+    <button class="nav-link col-3 font-weight-bold h2" id="nav-vegetableseeds-tab" data-toggle="tab" data-target="#nav-vegetableseeds" type="button" role="tab" aria-controls="nav-vegetableseeds" aria-selected="true">Vegetable Seeds</button>
+    @*<button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>*@
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-animalhealth" role="tabpanel" aria-labelledby="nav-animalhealth-tab">
+      
+    <div class="card">
+        <div class="card-header row">
+            <h3 class="card-title col-md-8">Animal Health</h3>
+            <span class="col-md-2">
+                <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Product</a>
+            </span>
+            <span class="col-md-2">
+                <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Products</a>
+            </span>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-bordered table-striped dataTable">
+        <thead>
+             <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Code)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Price)
+                </th>
+                <th>
+                    U. O. M
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].PackagingSize)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].BusinessLine)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].UpdateAt)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products) {
+                @if (product.BusinessLine.Description.Contains("Animal"))
+                    {
+                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Code)
+                            </td>
+                            <td>
+                                KSh @String.Format("{0:#,##0.00}", product.Price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.UnitOfMeasure)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.PackagingSize)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.BusinessLine.NormalizedName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.UpdateAt)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+    </table>
+    </div>
+</div>
+  </div>
+  <div class="tab-pane fade" id="nav-cropprotection" role="tabpanel" aria-labelledby="nav-cropprotection-tab">
+      
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-8">Crop Protection</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Product</a>
+        </span>
+        <span class="col-md-2">
+            <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Products</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+       <table class="table table-bordered table-striped dataTable">
+        <thead>
+             <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Code)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Price)
+                </th>
+                <th>
+                    U. O. M
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].PackagingSize)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].BusinessLine)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].UpdateAt)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products) {
+                @if (product.BusinessLine.Description.Contains("Crop"))
+                    {
+                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Code)
+                            </td>
+                            <td>
+                                KSh @String.Format("{0:#,##0.00}", product.Price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.UnitOfMeasure)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.PackagingSize)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.BusinessLine.NormalizedName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.UpdateAt)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+@*                                 <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+*@                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+    </table>
+    </div>
+</div>
+  </div>
+  
+  <div class="tab-pane fade" id="nav-explosives" role="tabpanel" aria-labelledby="nav-explosives-tab">
+      
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-8">Explosives</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Product</a>
+        </span>
+        <span class="col-md-2">
+            <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Products</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable">
+        <thead>
+             <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Code)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Price)
+                </th>
+                <th>
+                    U. O. M
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].PackagingSize)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].BusinessLine)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].UpdateAt)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products) {
+                @if (product.BusinessLine.Description.Contains("Explosives"))
+                    {
+                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Code)
+                            </td>
+                            <td>
+                                KSh @String.Format("{0:#,##0.00}", product.Price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.UnitOfMeasure)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.PackagingSize)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.BusinessLine.NormalizedName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.UpdateAt)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+@*                                 <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+*@                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+    </table>
+    </div>
+</div>
+  </div>  
+  <div class="tab-pane fade" id="nav-consumer" role="tabpanel" aria-labelledby="nav-consumer-tab">
+      
+<div class="card">
+    <div class="card-header row">
+        <h3 class="card-title col-md-8">Consumer</h3>
+        <span class="col-md-2">
+            <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Product</a>
+        </span>
+        <span class="col-md-2">
+            <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Products</a>
+        </span>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable">
+        <thead>
+             <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Code)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].Price)
+                </th>
+                <th>
+                    U. O. M
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].PackagingSize)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].BusinessLine)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products[0].UpdateAt)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products) {
+                @if (product.BusinessLine.Description.Contains("Consumer"))
+                    {
+                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.Code)
+                            </td>
+                            <td>
+                                KSh @String.Format("{0:#,##0.00}", product.Price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.UnitOfMeasure)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.PackagingSize)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.BusinessLine.NormalizedName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => product.UpdateAt)
+                            </td>
+                            <td class="row"> 
+                                 <a asp-page="./Edit" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                 <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+@*                                 <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a> 
+*@                            </td>
+                        </tr>       
+                    }
+            
+            }
+        </tbody>
+    </table>
+    </div>
+</div>
+  </div>
+    <div class="tab-pane fade" id="nav-vegetableseeds" role="tabpanel" aria-labelledby="nav-vegetableseeds-tab">
+
+        <div class="card">
+            <div class="card-header row">
+                <h3 class="card-title col-md-8">Vegetable Seeds</h3>
+                <span class="col-md-2">
+                    <a class="btn btn-success" href="" id="Input" data-toggle="modal" data-target="#InputModal">New Product</a>
+                </span>
+                <span class="col-md-2">
+                    <a class="btn btn-secondary" href="" id="Input" data-toggle="modal" data-target="#ImportModal">Import Products</a>
+                </span>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <table class="table table-bordered table-striped dataTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Products[0].Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Products[0].Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Products[0].Code)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Products[0].Price)
+                            </th>
+                            <th>
+                                U. O. M
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Products[0].PackagingSize)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Products[0].BusinessLine)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Products[0].UpdateAt)
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Products)
+                        {
+                            @if (product.BusinessLine.Description.Contains("Vegetable Seeds"))
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => product.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => product.Description)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => product.Code)
+                                    </td>
+                                    <td>
+                                        KSh @String.Format("{0:#,##0.00}", product.Price)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => product.UnitOfMeasure)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => product.PackagingSize)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => product.BusinessLine.NormalizedName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => product.UpdateAt)
+                                    </td>
+                                    <td class="row">
+                                        <a asp-page="./Edit" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Edit" class="col-5"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> |
+                                        <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                                        @*                                 <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" data-placement="top" title="Details" class="col-5"><i class="fa fa-info" aria-hidden="true"></i></a>
+                                *@
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  @*<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>*@
+</div>
+
+@*New Product modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="InputModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addingForm">
+                    <form method="post" id="addingForm" class="form-row">
+                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Product.Name" class="control-label"></label>
+                            <input asp-for="Product.Name" class="form-control" />
+                            <span asp-validation-for="Product.Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Product.Description" class="control-label"></label>
+                            <input asp-for="Product.Description" class="form-control" />
+                            <span asp-validation-for="Product.Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Product.Code" class="control-label"></label>
+                            <input asp-for="Product.Code" class="form-control" />
+                            <span asp-validation-for="Product.Code" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Product.Price" class="control-label">Price Per Unit</label>
+                            <input asp-for="Product.Price" class="form-control" />
+                            <span asp-validation-for="Product.Price" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Product.UnitOfMeasure" class="control-label"></label>
+                            <select asp-for="Product.UnitOfMeasure" class="form-control">
+                                <option value="">-- Select Unit Of Measure --</option>
+                                <option value="KG">Kilo Gram (KG)</option>
+                                <option value="L">Litre (L)</option>
+                                <option value="Pcs">Pieces (Pcs)</option>
+                            </select>
+                            <span asp-validation-for="Product.UnitOfMeasure" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Product.PackagingSize" class="control-label"></label>
+                            <input asp-for="Product.PackagingSize" class="form-control" />
+                            <span asp-validation-for="Product.PackagingSize" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Product.BusinessLineId" class="control-label">Busines Line</label>
+                                <select id="ddlBusinessLines" asp-for="Product.BusinessLineId" name="Product.BusinessLineId" asp-items="ViewBag.BusinessLines" class="form-control">
+                                    <option value="">--  Select Business Line  --</option>
+                                </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Import modal*@
+<div class="modal fade" tabindex="-1" role="dialog" id="ImportModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Receipt</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="addForm">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div>
+                           <p>Load Products from Excel Worksheet(supported file types are .xls or .xlsx)</p> 
+                           <p>Excel file should have columns in following order: </p> 
+                           <p>Product Name,Product Description,Product Code,Price Per Unit,U.O.M,Pack Size,Business Line</p> 
+                           <p>First row is the title row.</p> 
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label asp-for="Upload" class="control-label">Upload File</label>
+                            <input asp-for="Upload" class="form-control" />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" asp-page-handler="Import" class="btn btn-primary" id="submit">Action</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script>
+    //$(document).ready(function() {
+    //        $('form#addingForm').trigger("reset"); Line1
+    //        $('form#addingForm select').trigger("change"); Line2
+    //    });
+        window.addEventListener('load', () => resetForm());
+        function resetForm() {
+            document.getElementById("addingForm").reset;
+        }
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+      $("#ddlBusinessLines").select2({
+              dropdownParent: $("#InputModal")
+      });
+});
+</script>
+<script>
+    $(document).ready(function() {
+        $('button[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            changeSelect()
+        })
+
+        // Select2
+        function changeSelect() {
+            $("#ddlBusinessLines").select2({
+                tags: true,
+                dropdownParent: $("#InputModal")
+            })
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    //$(function () {
+    //    $("#ddlBusinessLines").select2();
+    //});
+    $("body").on("change", "#ddlBusinessLines", function () {
+        $("input[name=BusinessLineId]").val($(this).find("option:selected").text());
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $(".dataTable").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false, "orderCellsTop" : true,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+});
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+	$('button[data-toggle="tab"]').on('show.bs.tab', function(e) {
+		localStorage.setItem('activeTab', $(e.target).attr('id'));
+	});
+	var activeTab = localStorage.getItem('activeTab');
+	if(activeTab){
+		$('#nav-tab #' + activeTab).tab('show');
+	}
+});
+</script>
